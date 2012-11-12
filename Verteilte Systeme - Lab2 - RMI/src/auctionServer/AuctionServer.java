@@ -34,7 +34,7 @@ public class AuctionServer {
 	public static ServerSocket serverSocket;
 	
 	public static void main(String[] args) {
-		if (args.length == 1) {
+		if (args.length == 3) {
 			tcpPort = Integer.parseInt(args[0]);
 			
 			if (tcpPort >= 1024 || tcpPort >= 65535) {
