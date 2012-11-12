@@ -1,6 +1,6 @@
 //Test Zugriff2
 
-package server;
+package auctionServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class Server {
+public class AuctionServer {
 
 	public static int tcpPort;
 	
@@ -108,7 +108,7 @@ class EnterKiller extends Thread {
 			
 			if (line.equals("")) {
 				//Log out all users, free ressources
-				if (!Server.userHostnames.isEmpty()) {
+				if (!AuctionServer.userHostnames.isEmpty()) {
 					/*
 					//DEBUG
 					System.out.println("There are logged in users");
@@ -151,11 +151,11 @@ class EnterKiller extends Thread {
 				}
 				try {
 					
-					Server.serverSocket.close();
+					AuctionServer.serverSocket.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				Server.listening = false;
+				AuctionServer.listening = false;
 			}
 		}
 		

@@ -1,4 +1,4 @@
-package server;
+package auctionServer;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -21,11 +21,11 @@ public class AuctionProtocol {
 			
 			// Added synchronized block, is "this" correct?
 			synchronized(this) {
-				Iterator<?> iter = Server.auctionDescription.entrySet().iterator();
+				Iterator<?> iter = AuctionServer.auctionDescription.entrySet().iterator();
 				
 				while (iter.hasNext()) {
 					Map.Entry entry = (Map.Entry) iter.next();
-					completeString = completeString + entry.getKey() + ". '" + entry.getValue() + "' " + Server.auctionOwner.get(entry.getKey()) + " " + Server.auctionEndtime.get(entry.getKey()) + " " + Server.auctionHighestBid.get(entry.getKey()).toString() + " " + Server.auctionHighestBidder.get(entry.getKey()) + "\n";
+					completeString = completeString + entry.getKey() + ". '" + entry.getValue() + "' " + AuctionServer.auctionOwner.get(entry.getKey()) + " " + AuctionServer.auctionEndtime.get(entry.getKey()) + " " + AuctionServer.auctionHighestBid.get(entry.getKey()).toString() + " " + AuctionServer.auctionHighestBidder.get(entry.getKey()) + "\n";
 				}
 			}
 			
@@ -38,7 +38,7 @@ public class AuctionProtocol {
 				fullDescription += split[i] + " ";
 			}
 			fullDescription = fullDescription.substring(0, fullDescription.length() - 1);
-			int newId = Server.auctionCounter + 1;
+			int newId = AuctionServer.auctionCounter + 1;
 			
 			Timestamp original = new Timestamp(System.currentTimeMillis());
 	        Calendar cal = Calendar.getInstance();
@@ -49,47 +49,47 @@ public class AuctionProtocol {
 			MyTask task = new MyTask(newId);
 			timer.schedule(task, (Long.parseLong(split[1]) * 1000));
 			
-			Server.auctionDescription.put(newId, fullDescription);
-			Server.auctionEndtime.put(newId, timestamp);
-			Server.auctionHighestBid.put(newId, 0.0);
-			Server.auctionHighestBidder.put(newId, "");
-			Server.auctionOwner.put(newId, userName);
-			Server.auctionCounter += 1;
+			AuctionServer.auctionDescription.put(newId, fullDescription);
+			AuctionServer.auctionEndtime.put(newId, timestamp);
+			AuctionServer.auctionHighestBid.put(newId, 0.0);
+			AuctionServer.auctionHighestBidder.put(newId, "");
+			AuctionServer.auctionOwner.put(newId, userName);
+			AuctionServer.auctionCounter += 1;
 			
 			return "An auction '" + fullDescription + "' with id " + newId + " has been created and will end on " + timestamp + ".";
 		} else if (command.startsWith("!bid ")) {
 			int auctionId = Integer.parseInt(split[1]);
-			double oldValue = Server.auctionHighestBid.get(auctionId);
+			double oldValue = AuctionServer.auctionHighestBid.get(auctionId);
 			double bidValue = Double.parseDouble(split[2]);
-			String oldUser = Server.auctionHighestBidder.get(auctionId);
+			String oldUser = AuctionServer.auctionHighestBidder.get(auctionId);
 
-			if (bidValue > Server.auctionHighestBid.get(auctionId)) {						
+			if (bidValue > AuctionServer.auctionHighestBid.get(auctionId)) {						
 				// New bid must be higher than last winning bid
-				if (userName != Server.auctionHighestBidder.get(auctionId)) {				
+				if (userName != AuctionServer.auctionHighestBidder.get(auctionId)) {				
 					// Users can't overbid themselves
-					if (userName != Server.auctionOwner.get(auctionId)) {					
+					if (userName != AuctionServer.auctionOwner.get(auctionId)) {					
 						// Auction Owners can't bid on their auctions
-						Server.auctionHighestBid.put(auctionId, bidValue);
-						Server.auctionHighestBidder.put(auctionId, userName);
+						AuctionServer.auctionHighestBid.put(auctionId, bidValue);
+						AuctionServer.auctionHighestBidder.put(auctionId, userName);
 						
 						if (oldValue != 0.0) {
 							// Notify old bidder if there is one
-							String overbidString = "!new-bid " + Server.auctionDescription.get(auctionId);
-							if (Server.userHostnames.containsKey(oldUser)) {		
+							String overbidString = "!new-bid " + AuctionServer.auctionDescription.get(auctionId);
+							if (AuctionServer.userHostnames.containsKey(oldUser)) {		
 								// Notify User directly if he is logged in
 								notifyClient(overbidString, oldUser);
 					    	} else {
-					    		if (Server.userMissed.get(oldUser).equals("")) {			
+					    		if (AuctionServer.userMissed.get(oldUser).equals("")) {			
 					    			// If notify - string is empty
-					    			Server.userMissed.put(oldUser, overbidString);			
+					    			AuctionServer.userMissed.put(oldUser, overbidString);			
 					    		} else {														
 					    			// If notify - String non-empty
-					    			Server.userMissed.put(oldUser, Server.userMissed.get(oldUser) + ";" + overbidString);
+					    			AuctionServer.userMissed.put(oldUser, AuctionServer.userMissed.get(oldUser) + ";" + overbidString);
 					    		}
 					    	}
 						}
 						
-						return "You successfully bid with " + bidValue + " on '" + Server.auctionDescription.get(auctionId) + "'.";
+						return "You successfully bid with " + bidValue + " on '" + AuctionServer.auctionDescription.get(auctionId) + "'.";
 					} else {
 						return "You can't bid on your own auctions.";
 					}
@@ -105,18 +105,18 @@ public class AuctionProtocol {
 	protected static void notifyClient(String message, String name) {
 		byte[] buf = message.getBytes();
 		try {
-			if (Server.userHostnames.containsKey(name)) {
-				InetAddress address = InetAddress.getByName(Server.userHostnames.get(name));
+			if (AuctionServer.userHostnames.containsKey(name)) {
+				InetAddress address = InetAddress.getByName(AuctionServer.userHostnames.get(name));
 	    		
-	    		DatagramPacket testPacket = new DatagramPacket(buf, buf.length, address, Server.userPorts.get(name));
+	    		DatagramPacket testPacket = new DatagramPacket(buf, buf.length, address, AuctionServer.userPorts.get(name));
 	    		DatagramSocket dsocket = new DatagramSocket();
 	    	    dsocket.send(testPacket);
 	    	    dsocket.close();
 	    		
-	    	    InetAddress hostAddress = InetAddress.getByName(Server.userHostnames.get(name));
+	    	    InetAddress hostAddress = InetAddress.getByName(AuctionServer.userHostnames.get(name));
 			} else {
 				//maybe usersMissed needs to be initialized with ""?
-				Server.userMissed.get(name).concat(message + "\n");
+				AuctionServer.userMissed.get(name).concat(message + "\n");
 			}
 		} catch (Exception e) {
 			System.out.println("Error sending Test UDP packet.");
@@ -133,15 +133,15 @@ public class AuctionProtocol {
 
 	    public void run() {
 	    
-	    	String highestBidder = Server.auctionHighestBidder.get(id);
-	    	String auctionOwner = Server.auctionOwner.get(id);
-	    	Double highestBid = Server.auctionHighestBid.get(id);
+	    	String highestBidder = AuctionServer.auctionHighestBidder.get(id);
+	    	String auctionOwner = AuctionServer.auctionOwner.get(id);
+	    	Double highestBid = AuctionServer.auctionHighestBid.get(id);
 	    	
-    		String winString = "!auction-ended " + highestBidder + " " + highestBid.toString() + " " + Server.auctionDescription.get(id);
+    		String winString = "!auction-ended " + highestBidder + " " + highestBid.toString() + " " + AuctionServer.auctionDescription.get(id);
 	    	//notify winner and owner of finished auction if they are online, otherwise queue notifications
 	    	//If Highest bidder is logged in
 	    	
-    		if (Server.userHostnames.containsKey(highestBidder)) {		
+    		if (AuctionServer.userHostnames.containsKey(highestBidder)) {		
 	    		AuctionProtocol.notifyClient(winString, highestBidder);
 	    	} else {
 
@@ -153,28 +153,28 @@ public class AuctionProtocol {
 		    		System.out.println("Missed Notifications for User: '" + Server.userMissed.get(highestBidder) + "'");
 		    		DEBUG */
 		    		
-		    		if (Server.userMissed.get(highestBidder).equals("")) {			// If notify - string is empty
-		    			Server.userMissed.put(highestBidder, winString);			// Put winString
+		    		if (AuctionServer.userMissed.get(highestBidder).equals("")) {			// If notify - string is empty
+		    			AuctionServer.userMissed.put(highestBidder, winString);			// Put winString
 		    		} else {														// If notify - String non-empty
-		    			Server.userMissed.put(highestBidder, Server.userMissed.get(highestBidder) + ";" + winString);
+		    			AuctionServer.userMissed.put(highestBidder, AuctionServer.userMissed.get(highestBidder) + ";" + winString);
 		    		}
 	    		}
 	    	}
-	    	if (Server.userHostnames.containsKey(auctionOwner)) {
-	    		AuctionProtocol.notifyClient(winString, Server.auctionOwner.get(id));
+	    	if (AuctionServer.userHostnames.containsKey(auctionOwner)) {
+	    		AuctionProtocol.notifyClient(winString, AuctionServer.auctionOwner.get(id));
 	    	} else {
-	    		if (Server.userMissed.get(auctionOwner).equals("")) {		// If notify - string is empty
-	    			Server.userMissed.put(auctionOwner, winString);			// Put winString
+	    		if (AuctionServer.userMissed.get(auctionOwner).equals("")) {		// If notify - string is empty
+	    			AuctionServer.userMissed.put(auctionOwner, winString);			// Put winString
 	    		} else {		// If notify - String non-empty
-	    			Server.userMissed.put(auctionOwner, Server.userMissed.get(auctionOwner) + ";" + winString);
+	    			AuctionServer.userMissed.put(auctionOwner, AuctionServer.userMissed.get(auctionOwner) + ";" + winString);
 	    		}
 	    	}
 	    	//remove auction from system
-	    	Server.auctionDescription.remove(id);
-	    	Server.auctionEndtime.remove(id);
-	    	Server.auctionHighestBid.remove(id);
-	    	Server.auctionHighestBidder.remove(id);
-	    	Server.auctionOwner.remove(id);
+	    	AuctionServer.auctionDescription.remove(id);
+	    	AuctionServer.auctionEndtime.remove(id);
+	    	AuctionServer.auctionHighestBid.remove(id);
+	    	AuctionServer.auctionHighestBidder.remove(id);
+	    	AuctionServer.auctionOwner.remove(id);
 	    	this.cancel();
 	    }
 	}

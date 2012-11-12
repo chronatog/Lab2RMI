@@ -1,4 +1,4 @@
-package client;
+package biddingClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,9 +9,10 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import server.ServerThread;
+import auctionServer.ServerThread;
 
-public class Client {
+
+public class BiddingClient {
 	//Input params
 	public static String host;
 	public static int tcpPort;

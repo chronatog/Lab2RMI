@@ -1,4 +1,4 @@
-package client;
+package biddingClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class ClientTcpThread extends Thread{
 		try {
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			while ((inputLine = in.readLine()) != null) {
-				Client.usage(inputLine);
+				BiddingClient.usage(inputLine);
 			}
 		} catch (IOException e) {
 			System.out.println("Problem reading from Server with TCP.");

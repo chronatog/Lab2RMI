@@ -1,4 +1,4 @@
-package client;
+package biddingClient;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -35,15 +35,15 @@ public class ClientUdpThread extends Thread {
 					}
 					fullDescription = fullDescription.substring(0, fullDescription.length() - 1);		
 					
-					if (Client.userName.equals(highestBidder)) {	
+					if (BiddingClient.userName.equals(highestBidder)) {	
 						// If highest Bidder
-						Client.usage("The auction '" + fullDescription + "' has ended. You won with " + highestBid + "!");
+						BiddingClient.usage("The auction '" + fullDescription + "' has ended. You won with " + highestBid + "!");
 					} else if (highestBid == 0.0){
 						// If no bid
-						Client.usage("The auction '" + fullDescription + "' has ended. No bids were made.");
+						BiddingClient.usage("The auction '" + fullDescription + "' has ended. No bids were made.");
 					} else {
 						// If owner
-						Client.usage("The auction '" + fullDescription + "' has ended. " + highestBidder + " won with " + highestBid + ".");
+						BiddingClient.usage("The auction '" + fullDescription + "' has ended. " + highestBidder + " won with " + highestBid + ".");
 					}
 				} else if (command.equals("!new-bid")){
 						// Iterate over auction description
@@ -51,13 +51,13 @@ public class ClientUdpThread extends Thread {
 							fullDescription += split[i] + " ";
 						}
 						fullDescription = fullDescription.substring(0, fullDescription.length() - 1);
-						Client.usage("You have been overbid on '" + fullDescription + "'");
+						BiddingClient.usage("You have been overbid on '" + fullDescription + "'");
 					} else {
-						Client.usage(message);
+						BiddingClient.usage(message);
 					}
 					packet.setLength(buf.length);
 				} catch (IOException e) {
-					Client.usage("Error receiving UDP packet.");
+					BiddingClient.usage("Error receiving UDP packet.");
 					System.exit(-1);
 				}
 			}

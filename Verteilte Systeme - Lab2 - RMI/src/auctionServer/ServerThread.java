@@ -1,4 +1,4 @@
-package server;
+package auctionServer;
 
 import java.net.*;
 import java.io.*;
@@ -30,15 +30,15 @@ public class ServerThread extends Thread {
 	        			userName = inputLine.split(" ")[1];
 	        			udpPort = Integer.parseInt(inputLine.split(" ")[2]);
 	        			
-		        		if (!Server.userPorts.containsKey(userName)) {
+		        		if (!AuctionServer.userPorts.containsKey(userName)) {
 		        			loggedIn = true;
-		        			Server.userPorts.put(userName, udpPort);
-		        			Server.userHostnames.put(userName, socket.getInetAddress().getHostAddress());
+		        			AuctionServer.userPorts.put(userName, udpPort);
+		        			AuctionServer.userHostnames.put(userName, socket.getInetAddress().getHostAddress());
 		        			
 		        			out.println("Successfully logged in as " + userName + "!");
 		        			
-		        			if (Server.userMissed.containsKey(userName)) {
-		        				String[] notifications = Server.userMissed.get(userName).split(";");
+		        			if (AuctionServer.userMissed.containsKey(userName)) {
+		        				String[] notifications = AuctionServer.userMissed.get(userName).split(";");
 		        				
 		        				if (!notifications[0].equals("")) {
 		        					for (int i = 0; i < notifications.length; i++) {
@@ -46,7 +46,7 @@ public class ServerThread extends Thread {
 		        					}
 		        				}
 		        			} else {
-		        				Server.userMissed.put(userName, "");	
+		        				AuctionServer.userMissed.put(userName, "");	
 		        			}
 		        			
 		        			
@@ -60,14 +60,14 @@ public class ServerThread extends Thread {
 	        	} else if (inputLine.equals("!logout")) {
 	        		if (loggedIn) {
 	        			loggedIn = false;
-	        			Server.userHostnames.remove(userName);
-	        			Server.userPorts.remove(userName);
+	        			AuctionServer.userHostnames.remove(userName);
+	        			AuctionServer.userPorts.remove(userName);
 		        		udpPort = 0;
 		        		out.println("Successfully logged out as " + userName + "!");
 		        		
 		        		
 		        		// DEBUG
-		        		Server.userMissed.put(userName, "");
+		        		AuctionServer.userMissed.put(userName, "");
 		        		// DEBUG
 		        		userName = null;
 	        		} else {
