@@ -1,4 +1,4 @@
-package analyticsServer;
+package event;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

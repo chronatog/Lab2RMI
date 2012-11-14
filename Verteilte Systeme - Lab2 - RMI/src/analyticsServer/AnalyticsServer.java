@@ -13,34 +13,32 @@ public class AnalyticsServer {
 	 * Arg 1: Bindingname for AnalyticsServer
 	 */
 	static String registryHost = "";
-	static int registryPort = 0;
 	static String analBind = "";
+	static int registryPort = 0;
 	
 	public static void main(String[] args) {
 		if (args.length == 1) {
 			analBind = args[0];
+			readProperties();
+			
+			AnalyticsRMIHandler rmiHandler = new AnalyticsRMIHandler();
+
+			try {
+				// Create stub
+				AnalyticsRMIInterface stub = (AnalyticsRMIInterface) UnicastRemoteObject.exportObject(rmiHandler, registryPort);
+
+				// bind stub to Registry
+				Registry registry = LocateRegistry.createRegistry(registryPort);
+				registry.rebind(analBind, stub);
+			} catch (RemoteException e) {
+				System.out.println("Error binding to Registry.");
+			}
+			
+			// To-Do: Implement AnalyticsServer
+		
 		} else {
 			System.out.println("Wrong argument count.");
 		}
-		
-		readProperties();
-		
-		AnalyticsRMIHandler rmiHandler = new AnalyticsRMIHandler();
-
-		try {
-			// Create stub
-			AnalyticsRMIInterface stub = (AnalyticsRMIInterface) UnicastRemoteObject.exportObject(rmiHandler, registryPort);
-
-			// bind stub to Registry
-			Registry registry;
-			registry = LocateRegistry.createRegistry(registryPort);
-			registry.rebind(analBind, stub);
-		} catch (RemoteException e) {
-			System.out.println("Error binding to Registry.");
-		}
-		
-		// To-Do: Implement AnalyticsServer
-	
 	}
 	
 	private static void readProperties() {
