@@ -5,7 +5,9 @@ import java.io.*;
 
 public class ServerThread extends Thread {
 	private Socket socket = null;
+	/* Should not be needed
 	public int udpPort;
+	*/
 	public String userName;
 	public boolean loggedIn;
 	
@@ -28,15 +30,22 @@ public class ServerThread extends Thread {
 	        	if (inputLine.startsWith("!login")) {
 	        		if (!loggedIn) {
 	        			userName = inputLine.split(" ")[1];
+	        			/* UDP port should not be passed on with !login command
 	        			udpPort = Integer.parseInt(inputLine.split(" ")[2]);
+	        			*/
 	        			
-		        		if (!AuctionServer.userPorts.containsKey(userName)) {
+		        		if (!AuctionServer.userHostnames.containsKey(userName)) {
 		        			loggedIn = true;
+		        			
+		        			/* Should not be needed
 		        			AuctionServer.userPorts.put(userName, udpPort);
+		        			*/
+		        			
 		        			AuctionServer.userHostnames.put(userName, socket.getInetAddress().getHostAddress());
 		        			
 		        			out.println("Successfully logged in as " + userName + "!");
 		        			
+		        			/* Should be removed, since no notifications are needed
 		        			if (AuctionServer.userMissed.containsKey(userName)) {
 		        				String[] notifications = AuctionServer.userMissed.get(userName).split(";");
 		        				
@@ -48,6 +57,7 @@ public class ServerThread extends Thread {
 		        			} else {
 		        				AuctionServer.userMissed.put(userName, "");	
 		        			}
+		        			*/
 		        			
 		        			
 		        			auctionP.processInput(inputLine);
@@ -61,14 +71,14 @@ public class ServerThread extends Thread {
 	        		if (loggedIn) {
 	        			loggedIn = false;
 	        			AuctionServer.userHostnames.remove(userName);
+	        			
+	        			/* Should not be needed anymore
 	        			AuctionServer.userPorts.remove(userName);
 		        		udpPort = 0;
+		        		*/
+	        			
 		        		out.println("Successfully logged out as " + userName + "!");
 		        		
-		        		
-		        		// DEBUG
-		        		AuctionServer.userMissed.put(userName, "");
-		        		// DEBUG
 		        		userName = null;
 	        		} else {
 	        			out.println("You have to log in first!");

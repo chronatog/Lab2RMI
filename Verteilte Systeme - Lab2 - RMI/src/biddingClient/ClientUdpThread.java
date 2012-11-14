@@ -1,5 +1,5 @@
 package biddingClient;
-
+/* Should not be needed at all
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -63,3 +63,4 @@ public class ClientUdpThread extends Thread {
 			}
 		}
 	}
+*/

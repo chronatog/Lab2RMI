@@ -1,7 +1,9 @@
 package auctionServer;
 
+/* Should not be needed anymore
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+*/
 import java.net.InetAddress;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -72,6 +74,7 @@ public class AuctionProtocol {
 						AuctionServer.auctionHighestBid.put(auctionId, bidValue);
 						AuctionServer.auctionHighestBidder.put(auctionId, userName);
 						
+						/* Should be removed, no need to notify old highest bidder
 						if (oldValue != 0.0) {
 							// Notify old bidder if there is one
 							String overbidString = "!new-bid " + AuctionServer.auctionDescription.get(auctionId);
@@ -88,6 +91,7 @@ public class AuctionProtocol {
 					    		}
 					    	}
 						}
+						*/
 						
 						return "You successfully bid with " + bidValue + " on '" + AuctionServer.auctionDescription.get(auctionId) + "'.";
 					} else {
@@ -102,6 +106,7 @@ public class AuctionProtocol {
 	}
 	return "";
 	}
+	/* Should not be needed anymore since clients are not notified by UDP anymore (or notified at all?)
 	protected static void notifyClient(String message, String name) {
 		byte[] buf = message.getBytes();
 		try {
@@ -122,6 +127,7 @@ public class AuctionProtocol {
 			System.out.println("Error sending Test UDP packet.");
 		}
 	}
+	*/
     		
 	}
 	class MyTask extends TimerTask {
@@ -137,21 +143,16 @@ public class AuctionProtocol {
 	    	String auctionOwner = AuctionServer.auctionOwner.get(id);
 	    	Double highestBid = AuctionServer.auctionHighestBid.get(id);
 	    	
+	    	/* Should be removed, since this is only logic for notifying auction winner and owner
+    		
     		String winString = "!auction-ended " + highestBidder + " " + highestBid.toString() + " " + AuctionServer.auctionDescription.get(id);
 	    	//notify winner and owner of finished auction if they are online, otherwise queue notifications
-	    	//If Highest bidder is logged in
 	    	
     		if (AuctionServer.userHostnames.containsKey(highestBidder)) {		
 	    		AuctionProtocol.notifyClient(winString, highestBidder);
 	    	} else {
 
 	    		if (highestBid != 0.0) {		// If an offer was made aka if there is a highest bidder
-		    		/* DEBUG
-	    			System.out.println("Size of userMissed Hash: " + Server.userMissed.size());
-		    		System.out.println("userMissed Hash content: " + Server.userMissed.toString());
-		    		System.out.println("Notification ready, auctionID: " + id + ", user not logged in: " + highestBidder);
-		    		System.out.println("Missed Notifications for User: '" + Server.userMissed.get(highestBidder) + "'");
-		    		DEBUG */
 		    		
 		    		if (AuctionServer.userMissed.get(highestBidder).equals("")) {			// If notify - string is empty
 		    			AuctionServer.userMissed.put(highestBidder, winString);			// Put winString
@@ -169,6 +170,8 @@ public class AuctionProtocol {
 	    			AuctionServer.userMissed.put(auctionOwner, AuctionServer.userMissed.get(auctionOwner) + ";" + winString);
 	    		}
 	    	}
+	    	
+	    	*/
 	    	//remove auction from system
 	    	AuctionServer.auctionDescription.remove(id);
 	    	AuctionServer.auctionEndtime.remove(id);

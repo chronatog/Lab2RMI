@@ -1,5 +1,3 @@
-//Test Zugriff2
-
 package auctionServer;
 
 import java.io.BufferedReader;
@@ -21,8 +19,11 @@ public class AuctionServer {
 	public static int tcpPort;
 	
 	public static Map<String, String> userHostnames = Collections.synchronizedMap(new HashMap<String, String>());
-	public static Map<String, Integer> userPorts = Collections.synchronizedMap(new HashMap<String, Integer>());
 	public static Map<String, String> userMissed = Collections.synchronizedMap(new HashMap<String, String>());
+	
+	/* Should not be needed anymore
+	public static Map<String, Integer> userPorts = Collections.synchronizedMap(new HashMap<String, Integer>());
+	*/
 	
 	public static Map<Integer, String> auctionDescription = Collections.synchronizedMap(new HashMap<Integer, String>());
 	public static Map<Integer, Timestamp> auctionEndtime = Collections.synchronizedMap(new HashMap<Integer, Timestamp>());
@@ -82,16 +83,22 @@ public class AuctionServer {
 	public String userHost(String username) {
 		return userHostnames.get(username);
 	}
+	/*
 	public int userUdpPort (String username) {
 		return userPorts.get(username);
 	}
+	*/
 	public void addUser(String username, String hostname, int udpPort) {
 		userHostnames.put(username, hostname);
+		/* Should not be needed anymore
 		userPorts.put(username, udpPort);
+		*/
 	}
 	public void removeUser(String username) {
 		userHostnames.remove(username);
+		/* Should not be needed anymore
 		userPorts.remove(username);
+		*/
 	}
 }
 class EnterKiller extends Thread {
@@ -109,12 +116,8 @@ class EnterKiller extends Thread {
 			
 			
 			if (line.equals("")) {
-				//Log out all users, free ressources
 				if (!AuctionServer.userHostnames.isEmpty()) {
-					/*
-					//DEBUG
-					System.out.println("There are logged in users");
-					//DEBUG
+					/*	To-Do: Add shutdown handling: Log out all users, free ressources 
 					
 					// If there are logged in users
 					Iterator<?> iter = Server.userHostnames.entrySet().iterator();

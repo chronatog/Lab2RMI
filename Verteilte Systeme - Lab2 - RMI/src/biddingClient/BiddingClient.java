@@ -4,25 +4,30 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.DatagramSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import auctionServer.ServerThread;
 
+/* Should not be needed anymore
+import java.net.DatagramSocket;
+*/
 
 public class BiddingClient {
 	//Input params
 	public static String host;
 	public static int tcpPort;
-	public static int udpPort;
 	public static String userName;
 	public static Socket clientSocket;
-	
+	/* UDP port should not be needed, therefore not handled as parameter?
+	public static int udpPort;
+	*/
 	public static void main(String[] args) {
 		clientSocket = null;
+		/* Nont needed
 		DatagramSocket udpSocket = null;
+		*/
 		PrintWriter out = null;
 		BufferedReader stdin = null;
 		userName = "";
@@ -30,11 +35,13 @@ public class BiddingClient {
 		if (args.length == 3) {
 			host = args[0];
 			tcpPort = Integer.parseInt(args[1]);
+			/* Not needed
 			udpPort = Integer.parseInt(args[2]);
-			
-			if (checkPort(tcpPort) && checkPort(udpPort)) {
+			*/
+			if (checkPort(tcpPort)) {
 				stdin = new BufferedReader(new InputStreamReader(System.in));
 				String line;
+				/* Should not be needed
 				try {
 					udpSocket = new DatagramSocket(udpPort);
 				} catch (SocketException e1) {
@@ -42,11 +49,12 @@ public class BiddingClient {
 					System.exit(-1);
 				}
 				new ClientUdpThread(udpSocket).start();
+				*/
 				
 				try {
 					clientSocket = new Socket(args[0], Integer.parseInt(args[1]));
 					out = new PrintWriter(clientSocket.getOutputStream(), true);
-					// In als neuen Thread?
+					
 					new ClientTcpThread(clientSocket).start();
 					
 				} catch (UnknownHostException e) {
@@ -69,7 +77,10 @@ public class BiddingClient {
 					String[] split = line.split(" ");
 					
 					if (line.startsWith("!login ") && split.length == 2) {
-						out.println(line + " " + udpPort);
+						// removed the udpPort from the !login command
+						// out.println(line + " " + udpPort);
+						
+						out.println(line);
 						userName = split[1];
 					} else if (line.equals("!logout")) {
 						out.println(line);
@@ -86,7 +97,9 @@ public class BiddingClient {
 							out.close();
 							stdin.close();
 							clientSocket.close();
+							/* Not necessary, since no UDPsocket is used
 							udpSocket.close();
+							*/
 						} catch (IOException e) {
 							usage("error freeing ressources");
 							System.exit(-1);
