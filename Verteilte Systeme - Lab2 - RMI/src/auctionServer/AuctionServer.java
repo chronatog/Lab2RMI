@@ -36,6 +36,8 @@ public class AuctionServer {
 	public static void main(String[] args) {
 		if (args.length == 3) {
 			tcpPort = Integer.parseInt(args[0]);
+			String analBind = args[1];
+			String billBind = args[2];
 			
 			if (tcpPort >= 1024 || tcpPort >= 65535) {
 				serverSocket = null;
