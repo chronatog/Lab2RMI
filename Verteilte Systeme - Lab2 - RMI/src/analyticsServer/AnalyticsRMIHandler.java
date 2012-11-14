@@ -5,7 +5,8 @@ import java.rmi.RemoteException;
 public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 
 	public String subscribe(EventInterface eventListener, String eventRegEx) throws RemoteException {
-		//return "Created subscription with ID 17 for events using filter '(USER_.*)|(BID_.*)'";
+		// int subscriptionID = 0;
+		// return "Created subscription with ID " + subscriptionID + " for events using filter " + eventRegEx;
 		return "";
 	}
 
