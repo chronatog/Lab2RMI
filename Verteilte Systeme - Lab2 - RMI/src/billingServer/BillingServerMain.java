@@ -15,7 +15,10 @@ public class BillingServerMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+
+            //args 0 = binging Name
+            // registry host und port bekommt man aus den registry.prop
+            //Registry durchfuehren
     }
 
 }
