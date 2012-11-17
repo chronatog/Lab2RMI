@@ -4,45 +4,22 @@
  */
 
 package billingServer;
+import java.rmi.*;
 
 /**
  *
  * @author lisibauernhofer
  */
-public class BillingServerSecure {
+public interface BillingServerSecure extends Remote {
 
-    /**
-     * @param args the command line arguments
-     */
+    public PriceSteps getPriceSteps() throws RemoteException;
 
+    public void createPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) throws RemoteException;
 
+    public void deletePriceStep(double startPrice, double endPrice)throws RemoteException;
 
+    public void billAuction(String user, long auctionID, double price)throws RemoteException;
 
-    public PriceSteps getPriceSteps(){
-
-        return null;
-    }
-
-    public void createPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent){
-
-    }
-
-    public void deletePriceStep(double startPrice, double endPrice){
-
-    }
-
-    public void billAuction(String user, long auctionID, double price){
-
-    }
-
-    public Bill getBill(String user){
-        return null;
-    }
-
-
-
-
-
+    public Bill getBill(String user) throws RemoteException;
 
 }
-

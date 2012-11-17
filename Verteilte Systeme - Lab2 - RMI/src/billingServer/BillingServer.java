@@ -4,17 +4,15 @@
  */
 
 package billingServer;
+
 import java.rmi.*;
-import java.rmi.server.*;
 
 /**
  *
  * @author lisibauernhofer
  */
-public class BillingServer implements BillingServerInt{
+public interface BillingServer extends Remote{
 
-   public BillingServerSecure login(String username, String password){
-       return null;
-   }
+    public BillingServerSecure login(String username, String password) throws RemoteException;
 
 }
