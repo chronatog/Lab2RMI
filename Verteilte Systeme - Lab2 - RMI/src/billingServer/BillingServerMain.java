@@ -35,9 +35,10 @@ public class BillingServerMain {
 
             bindingName = args[0];
             readProperties();
+            System.out.println("Nach read Prop" + registryPort);
             BillingServerImpl bs = new BillingServerImpl();
             try {
-                BillingServerImpl bsexport = (BillingServerImpl) UnicastRemoteObject.exportObject(bs, registryPort);
+                BillingServer bsexport = (BillingServer) UnicastRemoteObject.exportObject(bs, 0);
                 Registry registry;
 
                 registry = LocateRegistry.createRegistry(registryPort);
@@ -51,6 +52,9 @@ public class BillingServerMain {
             System.out.println("Wrong argument count.");
         }
     }
+
+    
+
     
     private static void readProperties(){
         InputStream in = ClassLoader.getSystemResourceAsStream("registry.properties"); 
@@ -66,7 +70,10 @@ public class BillingServerMain {
                 }
         
                 registryHost = props.getProperty("registry.host");
+
                 registryPort = Integer.parseInt(props.getProperty("registry.port"));
+                                System.out.println("In read Prop" + registryPort);
+
            }finally{     
                 try {
                     in.close();

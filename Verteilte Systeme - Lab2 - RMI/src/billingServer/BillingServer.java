@@ -13,6 +13,7 @@ import java.rmi.*;
  */
 public interface BillingServer extends Remote{
 
-    public BillingServerSecure login(String username, String password) throws RemoteException;
+     BillingServerSecure login(String username, String password) throws RemoteException;
 
 }
+

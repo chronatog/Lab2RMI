@@ -8,6 +8,7 @@ package billingServer;
 import billingServer.PriceSteps.PriceStep;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -20,7 +21,7 @@ public class BillingServerSecureImpl implements BillingServerSecure{
      */
      private static ArrayList<PriceSteps> priceStepsList = new ArrayList<PriceSteps>();
      private static PriceSteps priceSteps = new PriceSteps();
-
+     private static HashMap<String, ArrayList<UserBill>> bill;
 
 
     @Override
@@ -44,9 +45,28 @@ public class BillingServerSecureImpl implements BillingServerSecure{
 
     public void billAuction(String user, long auctionID, double price){
 
+        ArrayList<UserBill> billhelb;
+
+        synchronized (bill) {
+            billhelb = bill.get(user);
+            if (billhelb == null) {
+                billhelb = new ArrayList<UserBill>();
+		bill.put(user, billhelb);
+            }
+
+        }
+
+        UserBill userBill = new UserBill(auctionID, price, 0.0, 0.0, 0.0);
+		synchronized (billhelb) {
+			billhelb.add(userBill);
+		}
+           
+
     }
 
+    @Override
     public Bill getBill(String user){
+
         return null;
     }
 

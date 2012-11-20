@@ -39,11 +39,12 @@ public class PriceSteps {
         this.PriceSteps.add(newPS);
     }
 
-    void deleteStep(double startPrice, double endPrice) {
+    void deleteStep(double startPrice, double endPrice) throws RemoteException {
         for (int i = 0; i< PriceSteps.size(); i++){
             if(PriceSteps.get(i).minPrice == startPrice && PriceSteps.get(i).maxPrice == endPrice){
                 PriceSteps.remove(i);
-            }
+            } else throw new RemoteException("The price step does not exist");
+
         }
     }
 
@@ -103,6 +104,8 @@ public class PriceSteps {
             else
                 return false;
         }
+
+        
     }
 
 }

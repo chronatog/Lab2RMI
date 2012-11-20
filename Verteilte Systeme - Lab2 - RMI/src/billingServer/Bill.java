@@ -5,10 +5,21 @@
 
 package billingServer;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author lisibauernhofer
  */
-class Bill {
+public class Bill {
+
+    private String user;
+    private ArrayList<UserBill> userbill;
+
+
+    
+
+
+    
 
 }
