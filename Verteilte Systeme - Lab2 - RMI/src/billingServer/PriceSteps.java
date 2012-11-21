@@ -5,6 +5,9 @@
 
 package billingServer;
 
+import billingServer.PriceSteps.PriceStep;
+import java.io.Serializable;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -12,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author lisibauernhofer
  */
-public class PriceSteps {
+public class PriceSteps implements Serializable{
 
     private ArrayList<PriceStep> PriceSteps;
 
@@ -36,7 +39,9 @@ public class PriceSteps {
                 throw new RemoteException("The price interval collides with an existing price step");
             }
         }
+        System.out.println("PriceString: "+ toString());
         this.PriceSteps.add(newPS);
+
     }
 
     void deleteStep(double startPrice, double endPrice) throws RemoteException {
@@ -57,16 +62,29 @@ public class PriceSteps {
         //for()
         return header;// +"/n" +""+ String.format("%.2f\t%.2f\t%.1f\t%.1%%", minPrice, maxPrice, feeFixed, feeVariable);
         }
+    @Override
+    public String toString(){
+        String liste = "";
+
+        for(PriceStep pricestep : PriceSteps){
+
+            liste += pricestep.formatPriceStep() +"\n";
+            //System.out.println("Liste: "+ liste);
+
+
+        }
+        return liste; 
+    }
 
 
 
-    public class PriceStep{
+    public class PriceStep implements Serializable {
 
 
-        private double minPrice = 0.0;
-        private double maxPrice = 0.0;
-        private double feeFixed = 0.0;
-        private double feeVariable = 0.0;
+        private double minPrice;
+        private double maxPrice;
+        private double feeFixed;
+        private double feeVariable;
 
         PriceStep(double minPrice, double maxPrice, double feeFixed, double feeVariable){
         this.minPrice = minPrice;
@@ -83,8 +101,8 @@ public class PriceSteps {
         //%.2f -> Fliesskommerzahl die auf 2 Stellen gerundet wird
         //\t -> Tab
         //%% Prozentzeichen
-        String format = String.format("%.2f\t%.2f\t%.1f\t%.1%%", minPrice, maxPrice, feeFixed, feeVariable);
-        return format;
+        return String.format("%.2f\t%.2f\t%.1f\t%.1f%%",minPrice, maxPrice, feeFixed, feeVariable);
+
 
         }
 

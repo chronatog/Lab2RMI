@@ -32,8 +32,10 @@ public class BillingServerSecureImpl implements BillingServerSecure{
     @Override
     public void createPriceStep(double startPrice, double endPrice, 
             double fixedPrice, double variablePricePercent)throws RemoteException{
+        System.out.println("createPriceStep!!!");
 
         priceSteps.addPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
+        System.out.println("PriceStep: " + getPriceSteps().toString());
 
 
 

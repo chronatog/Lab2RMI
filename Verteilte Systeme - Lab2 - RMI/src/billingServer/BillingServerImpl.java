@@ -96,16 +96,18 @@ public class BillingServerImpl implements BillingServer{
     //
    @Override
    public BillingServerSecure login(String username, String password) throws RemoteException{
-
+        System.out.println("Im LOGIN");
        String psw = readProperties(username);
        String passwordhash = pwtoMD5(password);
 
        if(psw.equals(passwordhash)){
            //sollte loggerausgabe sein!!!
-           System.out.println("Successfully logged in as "+username);
-           BillingServerSecure bss = new BillingServerSecureImpl();
+            System.out.println("Successfully logged in as "+username);
+            BillingServerSecure billingServerSecure = new BillingServerSecureImpl();
+            BillingServerSecure billingServerSecureStub = (BillingServerSecure) UnicastRemoteObject.exportObject(billingServerSecure, 0);
+            return billingServerSecureStub;
 
-           return bss;
+           
        } else {
            System.out.println("Wrong passwort");
        }
