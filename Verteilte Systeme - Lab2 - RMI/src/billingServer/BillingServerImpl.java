@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.rmi.*;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,7 +23,75 @@ import java.util.logging.Logger;
  * @author lisibauernhofer
  */
 public class BillingServerImpl implements BillingServer{
-    
+
+    public BillingServerImpl() throws RemoteException{}
+
+    private static String bindingName = "";
+    private static String registryHost = "";
+    private static int registryPort = 0;
+
+    public static void main(String[] args) {
+        if(args.length==1){
+
+            //args 0 = binging Name
+
+            bindingName = args[0];
+            readProperties();
+            System.out.println("Nach read Prop" + registryPort);
+            BillingServer billingserver;
+            try {
+                billingserver = new BillingServerImpl();
+                BillingServer billingStub = (BillingServer) UnicastRemoteObject.exportObject(billingserver, 0);
+
+                LocateRegistry.createRegistry(registryPort);
+                Registry registry = LocateRegistry.getRegistry(registryPort);
+                registry.rebind(bindingName, billingStub);
+
+
+
+            } catch (RemoteException ex) {
+                Logger.getLogger(BillingServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+          
+
+            
+        }else{
+            System.out.println("Wrong argument count.");
+        }
+    }
+
+
+    private static void readProperties(){
+        InputStream in = ClassLoader.getSystemResourceAsStream("registry.properties");
+        if(in!=null){
+
+            Properties props = new Properties();
+            try{
+                try {
+                    props.load(in);
+                } catch (IOException ex) {
+                    //Logger.getLogger(BillingServerMain.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("Error:Loding Properties-File");
+                }
+
+                registryHost = props.getProperty("registry.host");
+
+                registryPort = Integer.parseInt(props.getProperty("registry.port"));
+                                System.out.println("In read Prop" + registryPort);
+
+           }finally{
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    //Logger.getLogger(BillingServerMain.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+           }
+        }else{
+            System.out.println("Error: Properties-File not found!");
+        }
+     }
 
     //
    @Override
@@ -69,7 +139,7 @@ public class BillingServerImpl implements BillingServer{
                 try {
                     in.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(BillingServerMain.class.getName()).log(Level.SEVERE, null, ex);
+                   // Logger.getLogger(BillingServerMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
            }
