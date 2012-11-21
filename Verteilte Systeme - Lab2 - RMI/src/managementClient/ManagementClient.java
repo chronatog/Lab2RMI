@@ -24,9 +24,9 @@ public class ManagementClient {
 			String userBill = "";
 			String filterRegex = "";
 			int subscriptionId = 0;
-			
+
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-			
+
 			while (true) {
 				try {
 					System.out.print(userName + "> ");
@@ -36,19 +36,19 @@ public class ManagementClient {
 					System.exit(-1);
 				}
 				String[] split = line.split(" ");
-				
+
 				/*
 				* Start of Billing commands
 				*/
-				
+
 				if (line.startsWith("!login ") && split.length == 3) {
 					userName = split[1];
 					userPwd = split[2];
 					// Login to Billing Server
-					
+
 				} else if (line.equals("!steps") && split.length == 1) {
 					// Call Pricing Steps from Billing Server
-					
+
 				} else if (line.startsWith("!addStep") && split.length == 5) {
 					startPrice 			= split[1];
 					endPrice   			= split[2];
@@ -58,19 +58,19 @@ public class ManagementClient {
 				} else if (line.startsWith("!removeStep") && split.length == 3) {
 					startPrice = split[1];
 					endPrice = split[2];
-					
+
 					// Call RemoveStep from Billing Server
 				} else if (line.startsWith("!bill") && split.length == 2) {
 					userBill = split[1];
-					
+
 					// Call Bill from Billing Server
 				} else if (line.equals("!logout") && split.length == 1) {
-					
+
 					// Log out user from BillingServer
 				/*
 				* Start of Analytics commands
 				*/
-					
+
 				} else if (line.equals("!subscribe") && split.length == 2) {
 					filterRegex = split[1];
 					// Subscribe to AnalyticsServer
@@ -78,13 +78,13 @@ public class ManagementClient {
 					subscriptionId = Integer.parseInt(split[1]);
 					// Unsubscribe to AnalyticsServer
 				} else if (line.equals("!auto") && split.length == 1) {
-					
+
 					// Set mode to Auto
 				} else if (line.equals("!hide") && split.length == 1) {
-					
+
 					// Set mode to Hide
 				} else if (line.equals("!print") && split.length == 1) {
-					
+
 					// Print all buffered events
 				} else {
 					System.out.println("Command not recognized.");
