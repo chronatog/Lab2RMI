@@ -8,7 +8,10 @@ package billingServer;
 import billingServer.PriceSteps.PriceStep;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,24 +22,20 @@ public class BillingServerSecureImpl implements BillingServerSecure{
     /**
      * @param args the command line arguments
      */
-     private static ArrayList<PriceSteps> priceStepsList = new ArrayList<PriceSteps>();
      private static PriceSteps priceSteps = new PriceSteps();
-     private static HashMap<String, ArrayList<UserBill>> bill;
+     private static ArrayList<UserBill> userBill = new ArrayList<UserBill>();
 
 
     @Override
-    public PriceSteps getPriceSteps()throws RemoteException {
+    public PriceSteps getPriceSteps() throws RemoteException {
         return BillingServerSecureImpl.priceSteps;
     }
 
     @Override
     public void createPriceStep(double startPrice, double endPrice, 
             double fixedPrice, double variablePricePercent)throws RemoteException{
-        System.out.println("createPriceStep!!!");
 
         priceSteps.addPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
-        System.out.println("PriceStep: " + getPriceSteps().toString());
-
 
 
     }
@@ -47,30 +46,24 @@ public class BillingServerSecureImpl implements BillingServerSecure{
 
     public void billAuction(String user, long auctionID, double price){
 
-        ArrayList<UserBill> billhelb;
-
-        synchronized (bill) {
-            billhelb = bill.get(user);
-            if (billhelb == null) {
-                billhelb = new ArrayList<UserBill>();
-		bill.put(user, billhelb);
-            }
+         synchronized(userBill){
+            UserBill uB = new UserBill(user, auctionID, price);
+            userBill.add(uB);
+            
 
         }
-
-        UserBill userBill = new UserBill(auctionID, price, 0.0, 0.0, 0.0);
-		synchronized (billhelb) {
-			billhelb.add(userBill);
-		}
-           
-
     }
+
+     
 
     @Override
-    public Bill getBill(String user){
+    public Bill getBill(String user) throws RemoteException{
 
-        return null;
+        return new Bill(user, userBill, priceSteps);
+       
     }
+
+
 
 
 

@@ -21,11 +21,11 @@ public class PriceSteps implements Serializable{
 
     public PriceSteps() {
         PriceSteps = new ArrayList<PriceStep>();
-    }
-
-    PriceSteps(ArrayList<PriceSteps> priceSteps){
 
     }
+
+
+    
 
     public void addPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) throws RemoteException {
         if(startPrice<0 || endPrice<0 || fixedPrice<0 || variablePricePercent<0){
@@ -39,7 +39,6 @@ public class PriceSteps implements Serializable{
                 throw new RemoteException("The price interval collides with an existing price step");
             }
         }
-        System.out.println("PriceString: "+ toString());
         this.PriceSteps.add(newPS);
 
     }
@@ -53,28 +52,42 @@ public class PriceSteps implements Serializable{
         }
     }
 
+     
+
+     public double getFeeFixByPrice(double price){
+        for(PriceStep helpPS: PriceSteps){
+            if(price > helpPS.getMinPrice()&&price <= helpPS.getMaxPrice()){
+                return helpPS.getFeeFixed();
+            }
+        }  return 0;
+     }
+
+     public double getFeeVariableByPrice(double price){
+        for(PriceStep helpPS: PriceSteps){
+            if(price > helpPS.getMinPrice()&&price <= helpPS.getMaxPrice()){
+                return helpPS.getFeeVariable();
+            }
+        }  return 0;
+     }
 
 
-    public  String showHeader(){
 
-        String header = "Min_Price\tMax_Price\tFee_Fixed\tFee_variable";
-
-        //for()
-        return header;// +"/n" +""+ String.format("%.2f\t%.2f\t%.1f\t%.1%%", minPrice, maxPrice, feeFixed, feeVariable);
-        }
+    
     @Override
     public String toString(){
         String liste = "";
+        String header = "Min_Price\tMax_Price\tFee_Fixed\tFee_variable";
 
         for(PriceStep pricestep : PriceSteps){
 
             liste += pricestep.formatPriceStep() +"\n";
-            //System.out.println("Liste: "+ liste);
 
 
         }
-        return liste; 
+        return header + "\n"+ liste;
     }
+
+
 
 
 
@@ -101,7 +114,7 @@ public class PriceSteps implements Serializable{
         //%.2f -> Fliesskommerzahl die auf 2 Stellen gerundet wird
         //\t -> Tab
         //%% Prozentzeichen
-        return String.format("%.2f\t%.2f\t%.1f\t%.1f%%",minPrice, maxPrice, feeFixed, feeVariable);
+        return String.format(" %.2f\t    %.2f\t    %.1f\t     %.1f%%",minPrice, maxPrice, feeFixed, feeVariable);
 
 
         }
@@ -122,8 +135,31 @@ public class PriceSteps implements Serializable{
             else
                 return false;
         }
+        
+       
+
+
+
+
+    public double getFeeFixed(){
+        return this.feeFixed;
+    }
+
+    public double getFeeVariable(){
+        return this.feeVariable;
+    }
+
+    public double getMaxPrice(){
+        return this.maxPrice;
+    }
+
+    public double getMinPrice(){
+        return this.minPrice;
+    }
 
         
     }
+
+
 
 }

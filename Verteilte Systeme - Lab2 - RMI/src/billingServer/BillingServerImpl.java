@@ -37,7 +37,6 @@ public class BillingServerImpl implements BillingServer{
 
             bindingName = args[0];
             readProperties();
-            System.out.println("Nach read Prop" + registryPort);
             BillingServer billingserver;
             try {
                 billingserver = new BillingServerImpl();
@@ -78,7 +77,6 @@ public class BillingServerImpl implements BillingServer{
                 registryHost = props.getProperty("registry.host");
 
                 registryPort = Integer.parseInt(props.getProperty("registry.port"));
-                                System.out.println("In read Prop" + registryPort);
 
            }finally{
                 try {
@@ -96,13 +94,11 @@ public class BillingServerImpl implements BillingServer{
     //
    @Override
    public BillingServerSecure login(String username, String password) throws RemoteException{
-        System.out.println("Im LOGIN");
        String psw = readProperties(username);
        String passwordhash = pwtoMD5(password);
 
        if(psw.equals(passwordhash)){
            //sollte loggerausgabe sein!!!
-            System.out.println("Successfully logged in as "+username);
             BillingServerSecure billingServerSecure = new BillingServerSecureImpl();
             BillingServerSecure billingServerSecureStub = (BillingServerSecure) UnicastRemoteObject.exportObject(billingServerSecure, 0);
             return billingServerSecureStub;

@@ -9,21 +9,16 @@ package billingServer;
  *
  * @author lisibauernhofer
  */
- public  class UserBill {
+public class UserBill {
 
-        private long auctionID;
-        private double strikePrice;
-        private double feeFix;
-        private double feeVariable;
-        private double feeTotal;
+    public String user;
+    public long auctionID;
+    public double price;
 
-        public UserBill(long auctionID, double strikePrice, double feeFix, double feeVariable, double feeTotal) {
-            this.auctionID = auctionID;
-            this.strikePrice = strikePrice;
-            this.feeFix = feeFix;
-            this.feeVariable = feeVariable;
-            this.feeTotal = feeTotal;
-        }
-
-   
+   public UserBill(String user, long auctionID, double price){
+        this.user = user;
+        this.auctionID = auctionID;
+        this.price = price;
     }
+
+}

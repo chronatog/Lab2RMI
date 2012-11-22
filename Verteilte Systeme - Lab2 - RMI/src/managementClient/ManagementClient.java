@@ -4,14 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+
 public class ManagementClient {
 
-	/**
+
+         /**
 	 * Arg 0: Bindingname for AnalyticsServer
 	 * Arg 1: BindingName for BillingServer
 	 */
 	public static void main(String[] args) {
-		if (args.length == 2) {
+                    if (args.length == 2) {
 			String analBind = args[0];;
 			String billBind = args[1];
 			String line = "";
@@ -97,3 +99,4 @@ public class ManagementClient {
 	}
 
 }
+
