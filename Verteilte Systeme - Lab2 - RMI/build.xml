@@ -77,7 +77,7 @@
     </target>
 
     <target name="run-mgmtclient1" depends="compile" description="Run Management Client 1.">
-        <java classname="${mgmtclient.name}" fork="true" classpathref="project.classpath">
+            <java classname="${mgmtclient.name}" fork="true" classpathref="project.classpath">
             <arg value="${analytics.bindingName}"/>
             <arg value="${billing.bindingName}"/>
         </java>
