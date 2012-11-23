@@ -3,6 +3,12 @@ package managementClient;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+
+// Maybe only import what definitely is needed?
+import billingServer.*;
 
 
 public class ManagementClient {
@@ -12,6 +18,10 @@ public class ManagementClient {
 	 * Arg 0: Bindingname for AnalyticsServer
 	 * Arg 1: BindingName for BillingServer
 	 */
+	static BillingServerImpl returnStub = null;
+	static String registryHost = "";
+	static int registryPort = 0;
+
 	public static void main(String[] args) {
                     if (args.length == 2) {
 			String analBind = args[0];;
@@ -28,6 +38,20 @@ public class ManagementClient {
 			int subscriptionId = 0;
 
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+
+			BillingServerImpl billingStub = null;
+
+			//readProperties();
+
+
+			try {
+				// Get Analyticsobject to use functions
+				Registry registry = LocateRegistry.getRegistry(registryHost,registryPort);
+
+			} catch (Exception e) {
+				System.out.println("Can't connect to registry.");
+				System.exit(1);
+			}
 
 			while (true) {
 				try {
@@ -47,6 +71,9 @@ public class ManagementClient {
 					userName = split[1];
 					userPwd = split[2];
 					// Login to Billing Server
+
+					// Get Login - object, pass on user credentials
+					// Store Secure - object if it worked
 
 				} else if (line.equals("!steps") && split.length == 1) {
 					// Call Pricing Steps from Billing Server
@@ -69,6 +96,7 @@ public class ManagementClient {
 				} else if (line.equals("!logout") && split.length == 1) {
 
 					// Log out user from BillingServer
+					// Destroy Secure - object, get Login - object
 				/*
 				* Start of Analytics commands
 				*/
@@ -97,6 +125,28 @@ public class ManagementClient {
 		}
 
 	}
+	private static void readProperties() {
+		java.io.InputStream is = ClassLoader.getSystemResourceAsStream("registry.properties");
+		if (is != null) {
+			java.util.Properties props = new java.util.Properties();
+			try {
+				try {
+					props.load(is);
+				} catch (IOException e) {
+					System.out.println("Error handling configuration file.");
+				}
+				registryHost = props.getProperty("registry.host");
+				registryPort = Integer.parseInt(props.getProperty("registry.port"));
 
+			} finally {
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		} else {
+			System.err.println("Properties file not found!");
+		}
+	}
 }
-
