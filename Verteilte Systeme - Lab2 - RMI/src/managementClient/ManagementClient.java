@@ -13,7 +13,7 @@ import billingServer.*;
 
 
 public class ManagementClient {
-
+            //TEST
 
          /**
 	 * Arg 0: Bindingname for AnalyticsServer
