@@ -95,8 +95,6 @@ public class ManagementClient {
 
 					// Call Bill from Billing Server
 				} else if (line.equals("!logout") && split.length == 1) {
-
-					// Log out user from BillingServer
 					// Destroy Secure - object, get Login - object
 				/*
 				* Start of Analytics commands
