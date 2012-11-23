@@ -8,6 +8,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 // Maybe only import what definitely is needed?
+// Test
 import billingServer.*;
 
 
