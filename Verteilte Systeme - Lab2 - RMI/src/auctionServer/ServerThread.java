@@ -21,11 +21,10 @@ public class ServerThread extends Thread {
 	    try {
 	        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 	        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-	 
 	        String inputLine, outputLine;
-	        
+
 	        AuctionProtocol auctionP = new AuctionProtocol();
-	       
+
 	        while ((inputLine = in.readLine()) != null) {
 	        	if (inputLine.startsWith("!login")) {
 	        		if (!loggedIn) {
@@ -42,7 +41,8 @@ public class ServerThread extends Thread {
 		        			*/
 		        			
 		        			AuctionServer.userHostnames.put(userName, socket.getInetAddress().getHostAddress());
-		        			
+		        			//System.out.println("user: " + userName);
+
 		        			out.println("Successfully logged in as " + userName + "!");
 		        			
 		        			/* Should be removed, since no notifications are needed
