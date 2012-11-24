@@ -4,13 +4,22 @@ package auctionServer;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 */
+import billingServer.BillingServer;
+import billingServer.BillingServerSecure;
 import java.net.InetAddress;
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AuctionProtocol {
 	protected String userName;
@@ -73,6 +82,7 @@ public class AuctionProtocol {
 						// Auction Owners can't bid on their auctions
 						AuctionServer.auctionHighestBid.put(auctionId, bidValue);
 						AuctionServer.auctionHighestBidder.put(auctionId, userName);
+
 						
 						/* Should be removed, no need to notify old highest bidder
 						if (oldValue != 0.0) {
@@ -132,6 +142,8 @@ public class AuctionProtocol {
 	}
 	class MyTask extends TimerTask {
 	 private int id;
+         static BillingServer billingServer = null;
+         static BillingServerSecure billingServerSecure = null;
 	    public MyTask(int newId) {
 	    	id = newId;
 	    	String internString;
@@ -142,6 +154,30 @@ public class AuctionProtocol {
 	    	String highestBidder = AuctionServer.auctionHighestBidder.get(id);
 	    	String auctionOwner = AuctionServer.auctionOwner.get(id);
 	    	Double highestBid = AuctionServer.auctionHighestBid.get(id);
+                long auctionID = id;
+
+                Registry registry;
+                try {
+                    registry = LocateRegistry.getRegistry("localhost", 11319);
+
+                    billingServer = (BillingServer) registry.lookup("BillingServerRef");
+
+                    BillingServerSecure bss =  billingServer.login("auctionServer", "auctionServer123");
+                    billingServerSecure = bss;
+
+                    bss.billAuction(highestBidder, auctionID, highestBid);
+
+
+                //BillingServerSecure bss;
+
+                } catch (NotBoundException ex) {
+                    //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (AccessException ex) {
+                   // Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                catch (RemoteException ex) {
+                //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+                 }
 	    	
 	    	/* Should be removed, since this is only logic for notifying auction winner and owner
     		
