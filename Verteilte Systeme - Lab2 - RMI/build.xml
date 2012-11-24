@@ -13,7 +13,7 @@
     <property name="client3.port" value="11313"/><!-- UDP port of 3rd Bidding Client -->
     <property name="mgmtclient.name" value="managementClient.ManagementClient"/><!-- Management Client's full class name (including the package) -->
     <property name="analytics.name" value="analyticsServer.AnalyticsServer"/><!-- Analytics Server's full class name (including the package) -->
-    <property name="billing.name" value="billingServer.BillingServerMain"/><!-- Billing Server's full class name (including the package) -->
+    <property name="billing.name" value="billingServer.BillingServerImpl"/><!-- Billing Server's full class name (including the package) -->
     <property name="analytics.bindingName" value="AnalyticsServerRef"/><!-- RMI Binding Name of the Analytics Server -->
     <property name="billing.bindingName" value="BillingServerRef"/><!-- RMI Binding Name of the Billing Server -->
     <property name="server.port" value="11310"/><!-- TCP port -->
