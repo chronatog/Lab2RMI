@@ -59,8 +59,8 @@ public class TestClient extends Thread{
     }
 
     private void login() {
-
-        out.println("!login lisi");
+        String login = "!login client"+clientNr;
+        out.println(login);
     }
 
 }
