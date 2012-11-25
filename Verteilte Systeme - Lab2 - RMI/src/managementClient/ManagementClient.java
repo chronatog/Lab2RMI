@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 
 public class ManagementClient {
-            //TEST
+            // bitte lass es funktionieren
 
          /**
 	 * Arg 0: Bindingname for AnalyticsServer
