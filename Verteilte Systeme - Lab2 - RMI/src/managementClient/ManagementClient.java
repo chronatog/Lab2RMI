@@ -8,15 +8,11 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-// Maybe only import what definitely is needed?
-// HAHAHAH, ES GEHT
 import billingServer.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class ManagementClient {
-	// bitte lass es funktionieren
 	/**
 	 * Arg 0: Bindingname for AnalyticsServer
 	 * Arg 1: BindingName for BillingServer
@@ -40,12 +36,9 @@ public class ManagementClient {
 			String userBill = "";
 			String filterRegex = "";
 			int subscriptionId = 0;
-
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 
-
 			readProperties();
-
 
 			try {
 				// Get Analyticsobject to use functions
