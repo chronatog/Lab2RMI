@@ -8,6 +8,7 @@ package loadTesting;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 import managementClient.ManagementClient;
 
@@ -26,6 +27,7 @@ public class LoadTest {
     private static int updateIntervalSec = 0;
     private static int bidsPerMin = 0;
     private static ArrayList<TestClient> testClient = null;
+    private static long startTime;
 
     
     public static void main(String[] args) {
@@ -38,13 +40,14 @@ public class LoadTest {
             readProperties();
 
             testClient = new ArrayList<TestClient>();
+             startTime = new Date().getTime();
 
             //ManagementClient mC = new ManagementClient();
             //ManagementClient.main(null);
 
             for(int client = 0; client<clientNr; client++){
 
-                TestClient testClientStub = new TestClient(host, port, client, auctionPerMin,
+                TestClient testClientStub = new TestClient(host, port, startTime, client, clientNr, auctionPerMin,
                         auctionDuration, updateIntervalSec, bidsPerMin);
 
                 testClient.add(testClientStub);

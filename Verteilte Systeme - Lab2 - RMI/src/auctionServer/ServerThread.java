@@ -41,7 +41,7 @@ public class ServerThread extends Thread {
 		        			*/
 		        			
 		        			AuctionServer.userHostnames.put(userName, socket.getInetAddress().getHostAddress());
-		        			//System.out.println("user: " + userName);
+		        			System.out.println("Login: " + userName);
 
 		        			out.println("Successfully logged in as " + userName + "!");
 		        			
@@ -89,6 +89,7 @@ public class ServerThread extends Thread {
 	        		if (loggedIn) {
 	        			if (inputLine.startsWith("!create ") || inputLine.startsWith("!bid ") || inputLine.equals("!list")) {
 		        			outputLine = auctionP.processInput(inputLine);
+                                                System.out.println(outputLine);
 			    	        out.println(outputLine);
 		        		} else {
 		        			out.println("Unrecognized command.");
