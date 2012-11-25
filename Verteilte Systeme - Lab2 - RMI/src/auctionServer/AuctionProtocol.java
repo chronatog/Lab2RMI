@@ -23,6 +23,8 @@ import java.util.logging.Logger;
 
 public class AuctionProtocol {
 	protected String userName;
+	static boolean exists;
+	
 	public String processInput(String command) {
 		String[] split = command.split(" ");
 		String completeString = "";
@@ -68,51 +70,71 @@ public class AuctionProtocol {
 			AuctionServer.auctionCounter += 1;
 			
 			return "An auction '" + fullDescription + "' with id " + newId + " has been created and will end on " + timestamp + ".";
+			
 		} else if (command.startsWith("!bid ")) {
 			int auctionId = Integer.parseInt(split[1]);
-			double oldValue = AuctionServer.auctionHighestBid.get(auctionId);
-			double bidValue = Double.parseDouble(split[2]);
-			String oldUser = AuctionServer.auctionHighestBidder.get(auctionId);
+			exists = false;
+			
+			// Add check for existing auction ID
+			synchronized(this) {
+				Iterator<?> iter = AuctionServer.auctionDescription.entrySet().iterator();
+				
+				while (iter.hasNext()) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					if (entry.getKey().equals(auctionId)) {
+						exists = true;
+					}
+				}
+			}
+			
+			if (exists == true) {
+				double oldValue = AuctionServer.auctionHighestBid.get(auctionId);
+				double bidValue = Double.parseDouble(split[2]);
+				String oldUser = AuctionServer.auctionHighestBidder.get(auctionId);
 
-			if (bidValue > AuctionServer.auctionHighestBid.get(auctionId)) {						
-				// New bid must be higher than last winning bid
-				if (userName != AuctionServer.auctionHighestBidder.get(auctionId)) {				
-					// Users can't overbid themselves
-					if (userName != AuctionServer.auctionOwner.get(auctionId)) {					
-						// Auction Owners can't bid on their auctions
-						AuctionServer.auctionHighestBid.put(auctionId, bidValue);
-						AuctionServer.auctionHighestBidder.put(auctionId, userName);
+				if (bidValue > AuctionServer.auctionHighestBid.get(auctionId)) {						
+					// New bid must be higher than last winning bid
+					if (userName != AuctionServer.auctionHighestBidder.get(auctionId)) {				
+						// Users can't overbid themselves
+						if (userName != AuctionServer.auctionOwner.get(auctionId)) {					
+							// Auction Owners can't bid on their auctions
+							AuctionServer.auctionHighestBid.put(auctionId, bidValue);
+							AuctionServer.auctionHighestBidder.put(auctionId, userName);
 
-						
-						/* Should be removed, no need to notify old highest bidder
-						if (oldValue != 0.0) {
-							// Notify old bidder if there is one
-							String overbidString = "!new-bid " + AuctionServer.auctionDescription.get(auctionId);
-							if (AuctionServer.userHostnames.containsKey(oldUser)) {		
-								// Notify User directly if he is logged in
-								notifyClient(overbidString, oldUser);
-					    	} else {
-					    		if (AuctionServer.userMissed.get(oldUser).equals("")) {			
-					    			// If notify - string is empty
-					    			AuctionServer.userMissed.put(oldUser, overbidString);			
-					    		} else {														
-					    			// If notify - String non-empty
-					    			AuctionServer.userMissed.put(oldUser, AuctionServer.userMissed.get(oldUser) + ";" + overbidString);
-					    		}
-					    	}
+							
+							/* Should be removed, no need to notify old highest bidder
+							if (oldValue != 0.0) {
+								// Notify old bidder if there is one
+								String overbidString = "!new-bid " + AuctionServer.auctionDescription.get(auctionId);
+								if (AuctionServer.userHostnames.containsKey(oldUser)) {		
+									// Notify User directly if he is logged in
+									notifyClient(overbidString, oldUser);
+						    	} else {
+						    		if (AuctionServer.userMissed.get(oldUser).equals("")) {			
+						    			// If notify - string is empty
+						    			AuctionServer.userMissed.put(oldUser, overbidString);			
+						    		} else {														
+						    			// If notify - String non-empty
+						    			AuctionServer.userMissed.put(oldUser, AuctionServer.userMissed.get(oldUser) + ";" + overbidString);
+						    		}
+						    	}
+							}
+							*/
+							
+							return "You successfully bid with " + bidValue + " on '" + AuctionServer.auctionDescription.get(auctionId) + "'.";
+						} else {
+							return "You can't bid on your own auctions.";
 						}
-						*/
-						
-						return "You successfully bid with " + bidValue + " on '" + AuctionServer.auctionDescription.get(auctionId) + "'.";
 					} else {
-						return "You can't bid on your own auctions.";
+						return "You can't overbid yourself.";
 					}
 				} else {
-					return "You can't overbid yourself.";
+					return "Bid must be higher than current highest bid.";
 				}
 			} else {
-				return "Bid must be higher than current highest bid.";
+				return "Auction doesn't exist.";
 			}
+			
 	}
 	return "";
 	}
