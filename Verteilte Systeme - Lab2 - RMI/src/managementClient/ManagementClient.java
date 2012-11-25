@@ -10,10 +10,14 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+import analyticsServer.AnalyticsRMIHandler;
+import analyticsServer.AnalyticsRMIInterface;
 import analyticsServer.AnalyticsServer;
 import billingServer.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import event.EventInterface;
 
 import sun.rmi.log.LogOutputStream;
 
@@ -26,7 +30,7 @@ public class ManagementClient {
 	static int registryPort = 0;
 	static BillingServer billingServer = null;
 	static BillingServerSecure billingServerSecure = null;
-	static AnalyticsServer analyticsServer = null;
+	static AnalyticsRMIInterface analyticsHandler = null;
 
 	public static void main(String[] args) {
 		if (args.length == 2) {
@@ -40,10 +44,10 @@ public class ManagementClient {
 			double fixedPrice = 0.0;
 			double variablePrice = 0.0;
 			String userBill = "";
-			String filterRegex = "";
+			String regex = "";
 			int subscriptionId = 0;
 			Registry registry = null;
-		
+			EventInterface eventListener = null;
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 
 			readProperties();
@@ -63,18 +67,18 @@ public class ManagementClient {
 			} catch (NotBoundException e1) {
 				System.out.println("Analytic Server not found.");
 			} catch (RemoteException e1) {
-				System.out.println("Problem finding remote object.");
+				System.out.println("Problem finding BillingServer remote object.");
 			}
 
 			// get analytics remote object
 			try {
-				analyticsServer = (AnalyticsServer) registry.lookup(analBind);
+				analyticsHandler = (AnalyticsRMIInterface) registry.lookup(analBind);
 			} catch (AccessException e1) {
 				System.out.println("Access to registry denied.");
 			} catch (NotBoundException e1) {
 				System.out.println("Analytic Server not found.");
 			} catch (RemoteException e1) {
-				System.out.println("Problem finding remote object.");
+				System.out.println("Problem finding AnalyticsServer remote object.");
 			} 
 			
 			while (true) {
@@ -88,9 +92,8 @@ public class ManagementClient {
 				String[] split = line.split(" ");
 
 				/*
-				* Start of Billing commands
+					Billing commands
 				*/
-
 				if (line.startsWith("!login ") && split.length == 3) {
 					userName = split[1];
 					userPwd = split[2];
@@ -118,26 +121,63 @@ public class ManagementClient {
 				} else if (line.equals("!logout") && split.length == 1) {
 					logout();
 				
-					
 				/*
-				* Start of Analytics commands
+					Analytics commands
 				*/
-
-				} else if (line.equals("!subscribe") && split.length == 2) {
-					filterRegex = split[1];
-					// Subscribe to AnalyticsServer
-				} else if (line.equals("!unsubscribe") && split.length == 2) {
-					subscriptionId = Integer.parseInt(split[1]);
-					// Unsubscribe to AnalyticsServer
 				} else if (line.equals("!auto") && split.length == 1) {
-
-					// Set mode to Auto
+					EventListener.setMode(0);
+					
 				} else if (line.equals("!hide") && split.length == 1) {
-
-					// Set mode to Hide
+					EventListener.setMode(1);
+					
+					System.out.println("Starting buffering of notifications..");
 				} else if (line.equals("!print") && split.length == 1) {
+					EventListener.printBuffer();
+					
+				} else if (line.equals("!subscribe") && split.length == 2) {
+					try {
+						eventListener = new EventListener();
+					} catch (RemoteException e) {
+						System.out.println("EventListener Remote Exception");
+					}
+					regex = "";
+					
+					try {
+						regex = split[1];
+					} catch (IndexOutOfBoundsException e) {
+						System.out.println("Error: Wrong argument count.");
+					}
+					
+					try {
+						String answer;
+						if (analyticsHandler == null) {
+							try {
+								analyticsHandler = (AnalyticsRMIInterface) registry.lookup(analBind);
+							} catch (NotBoundException e) {
+								System.out.println("Problem binding analytics Server");
+							}
+						}
+						answer = analyticsHandler.subscribe(eventListener, regex);
 
-					// Print all buffered events
+						System.out.println(answer);
+					} catch (RemoteException e) {
+						System.out.println("Analytic Server Remote Exception");
+					}
+				} else if (line.equals("!unsubscribe") && split.length == 2) {
+					String answer = "";
+
+					try {
+						subscriptionId = Integer.parseInt(split[1]);
+					} catch (IndexOutOfBoundsException e) {
+						System.out.println("Error: Wrong argument count");
+					}
+
+					try {
+						answer = analyticsHandler.unsubscribe(subscriptionId);
+					} catch (RemoteException e) {
+						System.out.println("Analytic Server Remote Exception");
+					}
+					System.out.println(answer);
 				} else {
 					System.out.println("Command not recognized.");
 				}

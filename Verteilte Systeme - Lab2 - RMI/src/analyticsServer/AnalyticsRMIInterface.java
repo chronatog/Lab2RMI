@@ -8,9 +8,9 @@ import event.EventInterface;
 
 public interface AnalyticsRMIInterface extends Remote {
 
-	String subscribe(EventInterface eventListener, String eventRegEx) throws RemoteException;
+	String subscribe(EventInterface eventListener, String regex) throws RemoteException;
 
-	void unsubscribe(String suscribtionID)  throws RemoteException ;
+	String unsubscribe(int subscriptionId)  throws RemoteException ;
 	
 	void processEvent(Event event)  throws RemoteException ;
 }

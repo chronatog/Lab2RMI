@@ -9,7 +9,7 @@ import java.util.List;
 
 import event.*;
 
-public class EventListener extends UnicastRemoteObject implements EventListenerInterface {
+public class EventListener extends UnicastRemoteObject implements EventInterface {
 	/* mode: 
 		0..!auto (display notifications)
 		1..!hide (notificationsBuffer new notifications)
@@ -167,7 +167,7 @@ public class EventListener extends UnicastRemoteObject implements EventListenerI
 		return mode;
 	}
 
-	protected static synchronized void setMode(byte mode) {
+	protected static synchronized void setMode(int mode) {
 		EventListener.mode = mode;
 	}
 

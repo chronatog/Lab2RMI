@@ -98,7 +98,13 @@ public class BillingServerImpl implements BillingServer{
     //
    @Override
    public BillingServerSecure login(String username, String password) throws RemoteException{
-       String psw = readProperties(username);
+       /*DEBUG
+	   System.out.println("Login received, username: " + username);
+	   System.out.println("password: " + password);
+	   DEBUG
+	   */
+	   
+	   String psw = readProperties(username);
        String passwordhash = pwtoMD5(password);
 
        if(psw.equals(passwordhash)){
@@ -109,7 +115,7 @@ public class BillingServerImpl implements BillingServer{
 
            
        } else {
-           System.out.println("Wrong passwort");
+           System.out.println("Wrong password");
        }
 
        if(passwordhash == null){

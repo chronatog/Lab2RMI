@@ -17,12 +17,13 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		return "";
 	}
 
-	public void unsubscribe(String subscriptionID)  throws RemoteException {
+	public String unsubscribe(int subscriptionID)  throws RemoteException {
 		// Mgmt clients call this to unsubscribe from events
 
 		// Manage subscriptions
 
 		//System.out.println("Subscription " + subscriptionID + " terminated");
+		return null;
 	}
 
 	public void processEvent(Event event)  throws RemoteException {
