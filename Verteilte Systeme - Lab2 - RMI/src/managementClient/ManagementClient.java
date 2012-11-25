@@ -17,7 +17,6 @@ public class ManagementClient {
 	 * Arg 0: Bindingname for AnalyticsServer
 	 * Arg 1: BindingName for BillingServer
 	 */
-	// New test,  had problems with Eclipse :/
 	static BillingServer billingServer = null;
 	static BillingServerSecure billingServerSecure = null;
 	static String registryHost = "";

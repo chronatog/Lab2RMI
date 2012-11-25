@@ -3,6 +3,7 @@ package analyticsServer;
 import java.io.IOException;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import analyticsServer.AnalyticsRMIInterface;
@@ -15,25 +16,35 @@ public class AnalyticsServer {
 	static String registryHost = "";
 	static String analBind = "";
 	static int registryPort = 0;
+	static Registry registry;
+	static AnalyticsRMIInterface stub;
 	
 	public static void main(String[] args) {
 		if (args.length == 1) {
 			analBind = args[0];
+			
 			readProperties();
 			
 			AnalyticsRMIHandler rmiHandler = new AnalyticsRMIHandler();
-
-			try {
-				// Create stub
-				AnalyticsRMIInterface stub = (AnalyticsRMIInterface) UnicastRemoteObject.exportObject(rmiHandler, registryPort);
-
+			// Create stub
+				try {
+					stub = (AnalyticsRMIInterface) UnicastRemoteObject.exportObject(rmiHandler, 0);
+				} catch (RemoteException e) {
+					System.out.println("couldn't export AnalyticsRMIInterface.");
+				}
+				
 				// bind stub to Registry
-				Registry registry = LocateRegistry.createRegistry(registryPort);
-				registry.rebind(analBind, stub);
-			} catch (RemoteException e) {
-				System.out.println("Error binding to Registry.");
-			}
-			
+				try {
+					registry = LocateRegistry.getRegistry(registryHost,registryPort);
+					try {
+						registry.list();
+					} catch (ConnectException e) {
+						 registry = LocateRegistry.createRegistry(registryPort);		// Create Registry if no Registry exists
+					}
+					registry.rebind(analBind, stub);									// Bind AnalyticsStub to Registry
+				} catch (RemoteException e) {
+					System.out.println("Could not bind Registry to port " + registryPort);
+				}
 			// To-Do: Implement AnalyticsServer
 		
 		} else {
