@@ -3,24 +3,30 @@ package managementClient;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+import analyticsServer.AnalyticsServer;
 import billingServer.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import sun.rmi.log.LogOutputStream;
 
 public class ManagementClient {
 	/**
 	 * Arg 0: Bindingname for AnalyticsServer
 	 * Arg 1: BindingName for BillingServer
-	 */
-	static BillingServer billingServer = null;
-	static BillingServerSecure billingServerSecure = null;
+	 */	
 	static String registryHost = "";
 	static int registryPort = 0;
+	static BillingServer billingServer = null;
+	static BillingServerSecure billingServerSecure = null;
+	static AnalyticsServer analyticsServer = null;
 
 	public static void main(String[] args) {
 		if (args.length == 2) {
@@ -32,23 +38,47 @@ public class ManagementClient {
 			double startPrice = 0.0;
 			double endPrice = 0.0;
 			double fixedPrice = 0.0;
-			double variablePricePercent = 0.0;
+			double variablePrice = 0.0;
 			String userBill = "";
 			String filterRegex = "";
 			int subscriptionId = 0;
+			Registry registry = null;
+		
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 
 			readProperties();
 
+			// Connect to registry
 			try {
-				// Get Analyticsobject to use functions
-				Registry registry = LocateRegistry.getRegistry(registryHost,registryPort);
-                                billingServer = (BillingServer) registry.lookup(billBind);
+
+				registry = LocateRegistry.getRegistry(registryHost,registryPort);
 			} catch (Exception e) {
-				System.out.println("Can't connect to registry.");
-				System.exit(1);
+				System.out.println("Couldn't find registry.");
+			}
+			// get billing remote object
+			try {
+				billingServer = (BillingServer) registry.lookup(billBind);
+			} catch (AccessException e1) {
+				System.out.println("Access to registry denied.");
+			} catch (NotBoundException e1) {
+				System.out.println("Analytic Server not found.");
+			} catch (RemoteException e1) {
+				System.out.println("Problem finding remote object.");
 			}
 
+			// get analytics remote object
+			try {
+				analyticsServer = (AnalyticsServer) registry.lookup(analBind);
+			} catch (AccessException e1) {
+				System.out.println("Access to registry denied.");
+			} catch (NotBoundException e1) {
+				System.out.println("Analytic Server not found.");
+			} catch (RemoteException e1) {
+				System.out.println("Problem finding remote object.");
+			} 
+			
+			
+			
 			while (true) {
 				try {
 					System.out.print(userName + "> ");
@@ -66,65 +96,31 @@ public class ManagementClient {
 				if (line.startsWith("!login ") && split.length == 3) {
 					userName = split[1];
 					userPwd = split[2];
-					 // Login to Billing Server
-                    BillingServerSecure bss;
-                    try {
-                        bss = billingServer.login(userName, userPwd);
-                        billingServerSecure = bss;
-                    // Store Secure - object if it worked
-                    // Store Secure - object if it worked
-                        if(bss != null){
-                            System.out.println(userName + " successfully logged in");
-                        }
-                    } catch (RemoteException ex) {
-                        System.out.println("Login failed");
-                    }
+					login(userName, userPwd);
+				
 				} else if (line.equals("!steps") && split.length == 1) {
-					// Call Pricing Steps from Billing Server
-					String steps;
-                    try {
-                        steps = billingServerSecure.getPriceSteps().toString();
-                        System.out.println(steps);
-
-                    } catch (RemoteException ex) {
-                        System.out.println("There are no price steps");
-                    }
-
+					steps();
+				
 				} else if (line.startsWith("!addStep") && split.length == 5) {
 					startPrice 			= Double.parseDouble(split[1]);
 					endPrice   			= Double.parseDouble(split[2]);
 					fixedPrice 			= Double.parseDouble(split[3]);
-					variablePricePercent            = Double.parseDouble(split[4]);
-					try {
-                        // Add step to BillingServer
-                        billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
-                    } catch (RemoteException ex) {
-                        //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
+					variablePrice 		= Double.parseDouble(split[4]);
+					addPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
+				
 				} else if (line.startsWith("!removeStep") && split.length == 3) {
 					startPrice = Double.parseDouble(split[1]);
                     endPrice = Double.parseDouble(split[2]);
-                    try {
-                        // Call RemoveStep from Billing Server
-                        billingServerSecure.deletePriceStep(startPrice, endPrice);
-                    } catch (RemoteException ex) {
-                        //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    removeStep(startPrice, endPrice);
+				
 				} else if (line.startsWith("!bill") && split.length == 2) {
 					userBill = split[1];
-
-					// Call Bill from Billing Server
-                    String bill;
-                    try {
-                        bill = billingServerSecure.getBill(userBill).toString();
-                        System.out.println(bill);
-
-                    } catch (RemoteException ex) {
-                        //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-                    }                    
+					bill(userBill);              
+				
 				} else if (line.equals("!logout") && split.length == 1) {
-					// Destroy Secure - object, get Login - object
+					logout();
+				
+					
 				/*
 				* Start of Analytics commands
 				*/
@@ -175,6 +171,86 @@ public class ManagementClient {
 			}
 		} else {
 			System.err.println("Properties file not found!");
+		}
+	}
+	private static void login(String username, String pw) {
+		if (billingServer == null) {
+			System.out.println("ERROR: Not connected to billing server");
+		} else {
+			try {
+				BillingServerSecure bss = billingServer.login(username, pw);
+				if (bss == null) {
+					System.out.println("ERROR: Login failed");
+				} else {
+					billingServerSecure = bss;
+					System.out.println(username + " successfully logged in");
+				}
+			} catch (RemoteException ex) {
+				System.out.println("BillingServer Remote Exception");
+			}
+		}
+	}
+
+	private static void logout() {
+		billingServerSecure = null;
+	}
+
+	private static void addPriceStep(double startPrice, double endPrice, double fixedFee, double variableFee) {
+		if (billingServerSecure == null) {
+			System.out.println("ERROR: You are currently not logged in");
+		} else if (endPrice != 0 && startPrice >= endPrice) {
+			System.out.println("ERROR: Incorrect price range");
+		} else {
+			try {
+				billingServerSecure.createPriceStep(startPrice, endPrice, fixedFee, variableFee);
+				System.out.println("Step [" + startPrice + " " + (endPrice == 0 ? "INFINITY" : endPrice) + "] successfully added");
+			} catch (RemoteException e) {
+				// Check if this displays the Error Messages from the billing Server
+				System.out.println(e.getMessage());
+			}
+		}
+	}
+
+	private static void removeStep(double startPrice, double endPrice) {
+		if (billingServerSecure == null) {
+			System.out.println("ERROR: You are currently not logged in");
+		} else {
+			try {
+				billingServerSecure.deletePriceStep(startPrice, endPrice);
+				System.out.println("Step [" + startPrice + " " + (endPrice == 0 ? "INFINITY" : endPrice) + "] successfully removed");
+			} catch (RemoteException e) {
+				System.out.println(e.getMessage());
+			} 
+		}
+	}
+
+	private static void steps() {
+		if (billingServerSecure == null) {
+			System.out.println("ERROR: You are currently not logged in");
+		} else {
+			try {
+				PriceSteps priceSteps = billingServerSecure.getPriceSteps();
+				System.out.println(priceSteps);
+			} catch (RemoteException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+	}
+
+	private static void bill(String userName) {
+		if (billingServerSecure == null) {
+			System.out.println("ERROR: You are currently not logged in");
+		} else {
+			try {
+				Bill bill = billingServerSecure.getBill(userName);
+				if (bill == null) {
+					System.out.println("ERROR: Bill not found for user " + userName);
+				} else {
+					System.out.println(bill);
+				}
+			} catch (RemoteException e) {
+				System.out.println("Billing Server Remote Exception");
+			}
 		}
 	}
 }

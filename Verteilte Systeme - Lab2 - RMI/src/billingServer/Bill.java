@@ -21,7 +21,7 @@ public class Bill implements Serializable{
    // private ArrayList<UserBill> userbill;
     private ArrayList<AuctionBill> auctionBill = new ArrayList<AuctionBill>();
 
-    public Bill(String user, ArrayList<UserBill> userbill, PriceSteps pirceStep){
+    public Bill(String user, ArrayList<UserBill> userbill, PriceSteps priceStep){
         //PriceSteps step = new PriceSteps();
         //PriceStep step = sp.new PriceStep();
 
@@ -34,8 +34,8 @@ public class Bill implements Serializable{
                double price = userbill.get(i).price;
 
                
-                   double feeFix = pirceStep.getFeeFixByPrice(price);
-                   double feeFree = ((price*pirceStep.getFeeVariableByPrice(price)/100));
+                   double feeFix = priceStep.getFeeFixByPrice(price);
+                   double feeFree = ((price*priceStep.getFeeVariableByPrice(price)/100));
                    double feeTotal = feeFix+feeFree;
                    AuctionBill auctionbillstub = new AuctionBill(auctionID, price, feeFix, feeFree, feeTotal);
                    auctionBill.add(auctionbillstub);

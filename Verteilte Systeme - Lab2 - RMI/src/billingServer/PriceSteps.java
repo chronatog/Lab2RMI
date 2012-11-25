@@ -29,7 +29,7 @@ public class PriceSteps implements Serializable{
 
     public void addPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) throws RemoteException {
         if(startPrice<0 || endPrice<0 || fixedPrice<0 || variablePricePercent<0){
-            throw new RemoteException("Negativ values are not allowed");
+            throw new RemoteException("Negative values are not allowed");
         }
 
         PriceStep newPS = new PriceStep(startPrice, endPrice,fixedPrice,variablePricePercent);
