@@ -41,9 +41,13 @@ public class BillingServerImpl implements BillingServer{
             try {
                 billingserver = new BillingServerImpl();
                 BillingServer billingStub = (BillingServer) UnicastRemoteObject.exportObject(billingserver, 0);
-
-                LocateRegistry.createRegistry(registryPort);
                 Registry registry = LocateRegistry.getRegistry(registryPort);
+                try{
+                    registry.list();
+                }catch(ConnectException e){
+                    LocateRegistry.createRegistry(registryPort);
+
+                }
                 registry.rebind(bindingName, billingStub);
 
 
