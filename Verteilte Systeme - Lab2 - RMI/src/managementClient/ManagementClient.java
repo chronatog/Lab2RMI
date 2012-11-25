@@ -16,19 +16,18 @@ import java.util.logging.Logger;
 
 
 public class ManagementClient {
-            // bitte lass es funktionieren
-
-         /**
+	// bitte lass es funktionieren
+	/**
 	 * Arg 0: Bindingname for AnalyticsServer
 	 * Arg 1: BindingName for BillingServer
 	 */
 	static BillingServer billingServer = null;
-        static BillingServerSecure billingServerSecure = null;
+	static BillingServerSecure billingServerSecure = null;
 	static String registryHost = "";
 	static int registryPort = 0;
 
 	public static void main(String[] args) {
-                    if (args.length == 2) {
+		if (args.length == 2) {
 			String analBind = args[0];;
 			String billBind = args[1];
 			String line = "";
@@ -74,68 +73,63 @@ public class ManagementClient {
 				if (line.startsWith("!login ") && split.length == 3) {
 					userName = split[1];
 					userPwd = split[2];
-                                    
-                                         // Login to Billing Server
-                                        BillingServerSecure bss;
-                                        try {
-                                            bss = billingServer.login(userName, userPwd);
-                                            billingServerSecure = bss;
-                                        // Store Secure - object if it worked
-                                        // Store Secure - object if it worked
-                                            if(bss != null){
-                                                System.out.println(userName + " successfully logged in");
-                                            }
-                                        } catch (RemoteException ex) {
-                                            System.out.println("Login failed");
-                                        }
-                                       
-
+					 // Login to Billing Server
+                    BillingServerSecure bss;
+                    try {
+                        bss = billingServer.login(userName, userPwd);
+                        billingServerSecure = bss;
+                    // Store Secure - object if it worked
+                    // Store Secure - object if it worked
+                        if(bss != null){
+                            System.out.println(userName + " successfully logged in");
+                        }
+                    } catch (RemoteException ex) {
+                        System.out.println("Login failed");
+                    }
 				} else if (line.equals("!steps") && split.length == 1) {
 					// Call Pricing Steps from Billing Server
-                                        String steps;
-                                        try {
-                                            steps = billingServerSecure.getPriceSteps().toString();
-                                            System.out.println(steps);
+					String steps;
+                    try {
+                        steps = billingServerSecure.getPriceSteps().toString();
+                        System.out.println(steps);
 
-                                        } catch (RemoteException ex) {
-                                            System.out.println("There are no price steps");
-                                        }
+                    } catch (RemoteException ex) {
+                        System.out.println("There are no price steps");
+                    }
 
 				} else if (line.startsWith("!addStep") && split.length == 5) {
 					startPrice 			= Double.parseDouble(split[1]);
 					endPrice   			= Double.parseDouble(split[2]);
 					fixedPrice 			= Double.parseDouble(split[3]);
 					variablePricePercent            = Double.parseDouble(split[4]);
-                                        try {
-                                            // Add step to BillingServer
-                                            billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
-                                        } catch (RemoteException ex) {
-                                            //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
+					try {
+                        // Add step to BillingServer
+                        billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
+                    } catch (RemoteException ex) {
+                        //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
-                                } else if (line.startsWith("!removeStep") && split.length == 3) {
+				} else if (line.startsWith("!removeStep") && split.length == 3) {
 					startPrice = Double.parseDouble(split[1]);
-                                        endPrice = Double.parseDouble(split[2]);
-                                        try {
-                                            // Call RemoveStep from Billing Server
-                                            billingServerSecure.deletePriceStep(startPrice, endPrice);
-                                        } catch (RemoteException ex) {
-                                            //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
-
-                                } else if (line.startsWith("!bill") && split.length == 2) {
+                    endPrice = Double.parseDouble(split[2]);
+                    try {
+                        // Call RemoveStep from Billing Server
+                        billingServerSecure.deletePriceStep(startPrice, endPrice);
+                    } catch (RemoteException ex) {
+                        //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+				} else if (line.startsWith("!bill") && split.length == 2) {
 					userBill = split[1];
 
 					// Call Bill from Billing Server
-                                        String bill;
-                                        try {
-                                            bill = billingServerSecure.getBill(userBill).toString();
-                                            System.out.println(bill);
+                    String bill;
+                    try {
+                        bill = billingServerSecure.getBill(userBill).toString();
+                        System.out.println(bill);
 
-                                        } catch (RemoteException ex) {
-                                            //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
-                                        
+                    } catch (RemoteException ex) {
+                        //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
+                    }                    
 				} else if (line.equals("!logout") && split.length == 1) {
 					// Destroy Secure - object, get Login - object
 				/*
