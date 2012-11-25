@@ -77,8 +77,6 @@ public class ManagementClient {
 				System.out.println("Problem finding remote object.");
 			} 
 			
-			
-			
 			while (true) {
 				try {
 					System.out.print(userName + "> ");

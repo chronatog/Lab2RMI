@@ -3,9 +3,9 @@ package event;
 import java.io.Serializable;
 
 public abstract class Event implements Serializable {
-	private String id;
-	private String type;
-	private long timestamp;
+	protected String id;
+	protected String type;
+	protected long timestamp;
 
 	public String getId() {
 		return id;
