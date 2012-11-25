@@ -101,10 +101,6 @@ public class AuctionProtocol {
 							AuctionServer.auctionHighestBid.put(auctionId, bidValue);
 							AuctionServer.auctionHighestBidder.put(auctionId, userName);
 
-<<<<<<< HEAD
-=======
-							
->>>>>>> cdcbfcca0f0ca1139f1586c1904a74106ececb7c
 							/* Should be removed, no need to notify old highest bidder
 							if (oldValue != 0.0) {
 								// Notify old bidder if there is one
