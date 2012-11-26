@@ -66,22 +66,28 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 	public String unsubscribe(int subscriptionId)  throws RemoteException {
 		// Mgmt clients call this to unsubscribe from events
 		for (int i = 0; i < subscriptionList.size(); i++) {
-			if (subscriptionList.get(i).getId().equals(subscriptionId)) {
+			
+			//DEBUG
+			System.out.println("Asked to unsubscribe from subscription " + subscriptionId);
+			System.out.println("Current subscription ID to compare: " + subscriptionList.get(i).getId());
+			//
+			
+			
+			if (Integer.parseInt(subscriptionList.get(i).getId()) == subscriptionId) {
+				System.out.println("The subscriptions match!");
 				subscriptionList.remove(i);
 				return "subscription " + subscriptionId + " terminated";
+			} else {
+				System.out.println("They dont match");
 			}
 		}
-		// suscribtion can not be found
-		return "Error: The Suscription ID couldn't be found!";
+		return "Error: The Subscription ID couldn't be found!";
 	}
 
 	public String test() {
 		return "Function call works!";
 	}
 	public void processEvent(Event event)  throws RemoteException {
-
-		System.out.println("Processing " + event.getClass() + " Event, event type: " + event.getType());
-
 		if (event instanceof AuctionEvent) {
 			processAuctionEvent((AuctionEvent)event);
 		} else if (event instanceof BidEvent) {
@@ -89,6 +95,9 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		} else if (event instanceof UserEvent) {
 			processUserEvent((UserEvent)event);
 		}
+
+		// DEBUG
+		System.out.println("Received event, event type " + event.getType() + "Class" + event.getClass());
 
 		List<EventInterface> offlineList = new ArrayList<EventInterface>();
 		List<EventInterface> notificationListEvent = new ArrayList<EventInterface>(); 
@@ -105,11 +114,9 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			if (matcher.find()) {
 				if (!notificationListEvent.isEmpty()) {
 					if (!notificationListEvent.contains(eventListener)) {
-						System.out.println("EventListener will notify");
 						notificationListEvent.add(eventListener);
 					} 
 				} else {
-					System.out.println("EventListener will notify");
 					notificationListEvent.add(eventListener);
 				}
 			}
@@ -120,10 +127,6 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			EventInterface eventListener = null;
 			try {
 				eventListener = it.next();
-
-				// Debug
-				System.out.println("Found EventListener to notify");
-				//
 
 				eventListener.processEvent(event);
 			} catch (RemoteException e) {
@@ -146,6 +149,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 
 		if (event.getType().equals("AUCTION_STARTED")) {
 			auctionList.add(event);
+			
 		}
 
 		if (event.getType().equals("AUCTION_ENDED")) {
@@ -171,16 +175,16 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 				Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 				long timestamp = currentTimestamp.getTime();
 				try {
-					auctionSucessRatio = new StatisticsEvent(StatisticsEvent.AUCTION_SUCCESS_RATIO, timestamp, 0);
+					auctionSucessRatio = new StatisticsEvent("AUCTION_SUCCESS_RATIO", timestamp, 0);
 				} catch (Exception e) {
 					System.out.println("Error: Wrong Eventtype accured");
 				}
 			}
-			// in percent
 			auctionSucessRatio.setValue(100/auctionCounter*auctionsSucceded);
 
 			notifyManagementClients(auctionSucessRatio);
 		}
+		notifyManagementClients(event);
 	}
 
 	private void processBidEvent(BidEvent event) {
@@ -189,9 +193,9 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 				Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 				long timestamp = currentTimestamp.getTime();
 				try {
-					maxBid = new StatisticsEvent(StatisticsEvent.BID_PRICE_MAX, timestamp, event.getPrice());
+					maxBid = new StatisticsEvent("BID_PRICE_MAX", timestamp, event.getPrice());
 				} catch (Exception e) {
-					System.out.println("Error: Wrong Eventtype accured");
+					System.out.println("Error: Creating event failed");
 				}
 			}
 			if (event.getPrice() > maxBid.getValue()) {
@@ -199,11 +203,9 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			}
 			notifyManagementClients(maxBid);
 
-			// bits per minute
 			Timestamp nowTimeStamp = new Timestamp(System.currentTimeMillis());
 			long now = nowTimeStamp.getTime();
 
-			// determine minutes since systemstart- but it cannot be < 1
 			long differenceInMin = (now - systemStart)/1000/60;
 			if ((differenceInMin) < 1) {
 				differenceInMin = 1;
@@ -213,7 +215,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 
 			if (bidsPerMinute == null) {
 				try {
-					bidsPerMinute = new StatisticsEvent(StatisticsEvent.BID_COUNT_PER_MINUTE, now, bpm);
+					bidsPerMinute = new StatisticsEvent("BID_COUNT_PER_MINUTE", now, bpm);
 				} catch (Exception e) {
 					System.out.println("Error: Wrong Eventtype accured");
 				}
@@ -223,7 +225,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			}
 			notifyManagementClients(bidsPerMinute);
 		}
-
+		notifyManagementClients(event);
 	}
 
 	private void processUserEvent(UserEvent event) {
@@ -249,7 +251,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			}
 			if (minSessionTime == null) {
 				try {
-					minSessionTime = new StatisticsEvent(StatisticsEvent.USER_SESSIONTIME_MIN, timestamp, difference);
+					minSessionTime = new StatisticsEvent("USER_SESSIONTIME_MIN", timestamp, difference);
 					notifyManagementClients(minSessionTime);
 				} catch (Exception e) {
 					System.out.println("wrong Event Type");
@@ -258,7 +260,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 				// current session time is less than the min -> new min
 				if (minSessionTime.getValue() > difference) {
 					try {
-						minSessionTime = new StatisticsEvent(StatisticsEvent.USER_SESSIONTIME_MIN, timestamp, difference);
+						minSessionTime = new StatisticsEvent("USER_SESSIONTIME_MIN", timestamp, difference);
 						notifyManagementClients(minSessionTime);
 					} catch (Exception e) {
 						System.out.println("Wrong event type");
@@ -269,7 +271,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			// first maxEvent
 			if (maxSessionTime == null) {
 				try {
-					maxSessionTime = new StatisticsEvent(StatisticsEvent.USER_SESSIONTIME_MAX, timestamp, difference);
+					maxSessionTime = new StatisticsEvent("USER_SESSIONTIME_MAX", timestamp, difference);
 					notifyManagementClients(maxSessionTime);
 				} catch (Exception e) {
 					System.out.println("Wrong event type");
@@ -278,7 +280,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 				// current session time is bigger than the max -> new max
 				if (maxSessionTime.getValue() > difference) {
 					try {
-						maxSessionTime= new StatisticsEvent(StatisticsEvent.USER_SESSIONTIME_MAX, timestamp, difference);
+						maxSessionTime= new StatisticsEvent("USER_SESSIONTIME_MAX", timestamp, difference);
 						notifyManagementClients(maxSessionTime);
 					} catch (Exception e) {
 						System.out.println("Wrong event type");
@@ -297,14 +299,13 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			double newValue = (oldAvgValue * sessiontimeAvgMultiplicator + difference) / (1+sessiontimeAvgMultiplicator);
 			sessiontimeAvgMultiplicator++;
 			try {
-				avgSessionTime = new StatisticsEvent(StatisticsEvent.USER_SESSIONTIME_AVG, timestamp, newValue);
+				avgSessionTime = new StatisticsEvent("USER_SESSIONTIME_AVG", timestamp, newValue);
 				notifyManagementClients(avgSessionTime);
 			} catch (Exception e) {
 				System.out.println("Wrong event type");
 			}
 		}
-
-
+		notifyManagementClients(event);
 	}
 
 	private void notifyManagementClients(Event event) {
@@ -312,9 +313,10 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		List<EventInterface> notificationListForThisEvent = new ArrayList<EventInterface>(); 
 		Iterator<Subscription> iterator = subscriptionList.iterator();
 
-		System.out.println("Request to notify management client");
+		System.out.println("Request to notify management client, event type " + event.getType() + "Class" + event.getClass());
 
 		while (iterator.hasNext()) {
+			
 			Subscription subscription = iterator.next();
 
 			pattern = subscription.getRegex();
@@ -328,13 +330,9 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 
 				if (!notificationListForThisEvent.isEmpty()) {
 					if (!notificationListForThisEvent.contains(eventListener)) {
-						System.out.println("EventListener will notify");
 						notificationListForThisEvent.add(eventListener);
 					} 
-
-					// zero eventListeners in the notification List
 				} else {
-					System.out.println("EventListener will notify");
 					notificationListForThisEvent.add(subscription.getEventListener());
 				}
 			}
@@ -345,6 +343,9 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			EventInterface eventListener = null;
 			try {
 				eventListener = it.next();
+				
+				System.out.println("Calling processEvent for event type " + event.getType() + " Class " + event.getClass() );
+				
 				eventListener.processEvent(event);
 			} catch (RemoteException e) {
 				deleteList.add(eventListener);

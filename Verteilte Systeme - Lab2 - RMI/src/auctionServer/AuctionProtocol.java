@@ -79,16 +79,18 @@ public class AuctionProtocol {
 								AuctionServer.auctionHighestBidder.put(newId, "");
 								AuctionServer.auctionOwner.put(newId, userName);
 								AuctionServer.auctionCounter += 1;
-
+								AuctionServer.auctionDuration.put(newId, duration);
+								
 								// Call ProcessEvent from AnalyticsHandler for AUCTION_STARTED
 								Timestamp logoutTimestamp = new Timestamp(System.currentTimeMillis());
 								long ts = logoutTimestamp.getTime();
 								try {
-									analyticsHandler.processEvent(new AuctionEvent("AUCTION_STARTED", ts, newId));
+									ServerThread.analyticsHandler.processEvent(new AuctionEvent("AUCTION_STARTED", ts, newId));
+									
 								} catch (RemoteException e) {
 									System.out.println("Couldn't connect to Analytics Server");
 								} catch (Exception e) {
-									System.out.println("Error processing event");
+									System.out.println("Error processing event " + e.getClass());
 								}
 
 								return "An auction '" + fullDescription + "' with id " + newId + " has been created and will end on " + timestamp + ".";
@@ -127,7 +129,7 @@ public class AuctionProtocol {
 									if (bidValue > AuctionServer.auctionHighestBid.get(auctionId)) {
 										// New bid must be higher than last winning bid
 										if (userName != AuctionServer.auctionHighestBidder.get(auctionId)) {
-											
+
 											AuctionServer.auctionHighestBid.put(auctionId, bidValue);
 											AuctionServer.auctionHighestBidder.put(auctionId, userName);
 
@@ -135,25 +137,24 @@ public class AuctionProtocol {
 											Timestamp logoutTimestamp = new Timestamp(System.currentTimeMillis());
 											long ts = logoutTimestamp.getTime();
 											try {
-												analyticsHandler.processEvent(new BidEvent("BID_PLACED", ts, userName, auctionId, bidValue));
+												ServerThread.analyticsHandler.processEvent(new BidEvent("BID_PLACED", ts, userName, auctionId, bidValue));
 
 											} catch (RemoteException e) {
 												System.out.println("Couldn't connect to Analytics Server");
 											} catch (Exception e) {
-												System.out.println("Error processing event");
+												System.out.println("Error processing event " + e.getMessage());
 											}
-											
+
 											if (oldValue != 0.0) {
 												// Call BID_OVERBID
 												logoutTimestamp = new Timestamp(System.currentTimeMillis());
 												ts = logoutTimestamp.getTime();
 												try {
-													analyticsHandler.processEvent(new BidEvent("BID_OVERBID", ts, userName, auctionId, bidValue));
-
+													ServerThread.analyticsHandler.processEvent(new BidEvent("BID_OVERBID", ts, userName, auctionId, bidValue));
 												} catch (RemoteException e) {
 													System.out.println("Couldn't connect to Analytics Server");
 												} catch (Exception e) {
-													System.out.println("Error processing event");
+													System.out.println("Error processing event " + e.getMessage());
 												}
 											}
 											return "You successfully bid with " + bidValue + " on '" + AuctionServer.auctionDescription.get(auctionId) + "'.";
@@ -190,11 +191,41 @@ class MyTask extends TimerTask {
 		String highestBidder = AuctionServer.auctionHighestBidder.get(id);
 		String auctionOwner = AuctionServer.auctionOwner.get(id);
 		Double highestBid = AuctionServer.auctionHighestBid.get(id);
-		long auctionID = id;
+		int duration = AuctionServer.auctionDuration.get(id);
+		
+		long auctionId = id;
 		try {
-			ServerThread.billingServerSecureHandler.billAuction(highestBidder, auctionID, highestBid);
+			ServerThread.billingServerSecureHandler.billAuction(highestBidder, auctionId, highestBid);
 		} catch (RemoteException ex) {
 			Logger.getLogger(MyTask.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+		// Create BID_WON event
+		if (highestBid != 0.0) {		// Someone made an offer aka there is a winner
+			Timestamp logoutTimestamp = new Timestamp(System.currentTimeMillis());
+			long ts = logoutTimestamp.getTime();
+			try {
+				ServerThread.analyticsHandler.processEvent(new BidEvent("BID_WON", ts, highestBidder, auctionId, highestBid));
+			} catch (RemoteException e) {
+				System.out.println("Couldn't connect to Analytics Server");
+			} catch (Exception e) {
+				System.out.println("Error processing event");
+			}
+
+		}
+
+		// Create AUCTION_ENDED event
+		if (highestBid != 0.0) {		// Someone made an offer aka there is a winner
+			Timestamp logoutTimestamp = new Timestamp(System.currentTimeMillis());
+			long ts = logoutTimestamp.getTime();
+			try {
+				ServerThread.analyticsHandler.processEvent(new AuctionEvent("AUCTION_ENDED", ts, auctionId, duration, highestBidder));
+			} catch (RemoteException e) {
+				System.out.println("Couldn't connect to Analytics Server");
+			} catch (Exception e) {
+				System.out.println("Error processing event" + e.getClass());
+			}
+
 		}
 
 		/* Should be removed, since this is only logic for notifying auction winner and owner
@@ -206,14 +237,7 @@ class MyTask extends TimerTask {
 	    		AuctionProtocol.notifyClient(winString, highestBidder);
 	    	} else {
 
-	    		if (highestBid != 0.0) {		// If an offer was made aka if there is a highest bidder
 
-		    		if (AuctionServer.userMissed.get(highestBidder).equals("")) {			// If notify - string is empty
-		    			AuctionServer.userMissed.put(highestBidder, winString);			// Put winString
-		    		} else {														// If notify - String non-empty
-		    			AuctionServer.userMissed.put(highestBidder, AuctionServer.userMissed.get(highestBidder) + ";" + winString);
-		    		}
-	    		}
 	    	}
 	    	if (AuctionServer.userHostnames.containsKey(auctionOwner)) {
 	    		AuctionProtocol.notifyClient(winString, AuctionServer.auctionOwner.get(id));
@@ -232,6 +256,7 @@ class MyTask extends TimerTask {
 		AuctionServer.auctionHighestBid.remove(id);
 		AuctionServer.auctionHighestBidder.remove(id);
 		AuctionServer.auctionOwner.remove(id);
+		AuctionServer.auctionDuration.remove(id);
 		this.cancel();
 	}
 }

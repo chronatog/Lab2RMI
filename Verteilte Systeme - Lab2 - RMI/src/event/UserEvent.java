@@ -7,7 +7,7 @@ public class UserEvent extends Event {
 		if ((type.equals("USER_LOGIN") || type.equals("USER_LOGOUT") || type.equals("USER_DISCONNECTED"))) {
 			this.type = type;
 			this.timestamp = timestamp;
-			this.userString = userString;
+			this.userString = userName;
 		} else {
 			throw new Exception();
 		}

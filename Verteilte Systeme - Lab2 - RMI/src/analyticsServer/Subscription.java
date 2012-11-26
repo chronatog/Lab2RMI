@@ -36,6 +36,6 @@ public class Subscription {
 	}
 
 	private static synchronized String createId() {
-		return Integer.toString(idCount++);
+		return Integer.toString(idCount+=1);
 	}
 }

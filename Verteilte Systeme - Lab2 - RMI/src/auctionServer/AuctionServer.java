@@ -30,6 +30,8 @@ public class AuctionServer {
 	public static Map<Integer, Double> auctionHighestBid = Collections.synchronizedMap(new HashMap<Integer, Double>());
 	public static Map<Integer, String> auctionHighestBidder = Collections.synchronizedMap(new HashMap<Integer, String>());
 	public static Map<Integer, String> auctionOwner = Collections.synchronizedMap(new HashMap<Integer, String>());
+	public static Map<Integer, Integer> auctionDuration = Collections.synchronizedMap(new HashMap<Integer, Integer>());
+	
 	public static int auctionCounter = 0;
 	public static boolean listening;
 	public static ServerSocket serverSocket;

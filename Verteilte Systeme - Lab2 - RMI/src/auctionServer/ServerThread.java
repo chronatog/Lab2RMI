@@ -31,7 +31,7 @@ public class ServerThread extends Thread {
 	protected String billName;
 	protected BillingServer billingServerHandler;
 	public static BillingServerSecure billingServerSecureHandler;
-	protected AnalyticsRMIInterface analyticsHandler;
+	protected static AnalyticsRMIInterface analyticsHandler;
 	Registry registry = null;
 	protected static String registryHost;
 	protected static int registryPort;
@@ -118,7 +118,7 @@ public class ServerThread extends Thread {
 							} catch (RemoteException e) {
 								System.out.println("Couldn't connect to Analytics Server");
 							} catch (Exception e) {
-								System.out.println("Error processing event");
+								System.out.println("Error processing event USER_LOGIN");
 							}
 
 							out.println("Successfully logged in as " + userName + "!");
@@ -130,23 +130,25 @@ public class ServerThread extends Thread {
 						out.println("You are already logged in, please log out first.");
 					}
 				} else if (inputLine.equals("!logout")) {
-					if (loggedIn) {
-						loggedIn = false;
+					if (loggedIn == true) {
+						
 						AuctionServer.userHostnames.remove(userName);
 
 						// Call ProcessEvent from AnalyticsHandler for LOGOUT Event
 						Timestamp logoutTimestamp = new Timestamp(System.currentTimeMillis());
 						long timestamp = logoutTimestamp.getTime();
 						try {
+							System.out.println("Trying to call RMI USER_LOGOUT");
 							analyticsHandler.processEvent(new UserEvent("USER_LOGOUT", timestamp, userName));
 						} catch (RemoteException e) {
 							System.out.println("Couldn't connect to Analytics Server");
 						} catch (Exception e) {
-							System.out.println("Error processing event");
+							System.out.println("Error processing event USER_LOGOUT");
 						}
 
 						out.println("Successfully logged out as " + userName + "!");
-
+						
+						loggedIn = false;
 						userName = null;
 					} else {
 						out.println("You have to log in first!");
