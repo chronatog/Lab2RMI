@@ -14,6 +14,9 @@ public class EventListener extends UnicastRemoteObject implements EventInterface
 		0..!auto (display notifications)
 		1..!hide (notificationsBuffer new notifications)
 	*/
+	
+	// Displays incoming events in user-friendly form
+	
 	private static int mode = 0;
 	private static List<String> notificationsBuffer = new ArrayList<String>();
 	private int id = 0;
@@ -22,6 +25,9 @@ public class EventListener extends UnicastRemoteObject implements EventInterface
 	}
 	
 	public void processEvent(Event event) throws RemoteException {
+		
+		System.out.println("Incoming event received.");
+		
 		Timestamp myTimestamp = new Timestamp(event.getTimestamp());
 		String timestamp = new SimpleDateFormat("dd.MM.yyyy - hh:mm:ss z").format(myTimestamp);
 

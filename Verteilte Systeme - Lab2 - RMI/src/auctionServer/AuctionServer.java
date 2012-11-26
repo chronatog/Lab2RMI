@@ -48,15 +48,13 @@ public class AuctionServer {
 		            serverSocket = new ServerSocket(tcpPort);
 		        } catch (IOException e) {
 		            System.err.println("Could not listen on port: " + tcpPort + ".");
-		            
-		            System.exit(-1);
 		        }
 				try {
 					(new EnterKiller()).start();
 					
 					while (listening)
 						{
-							new ServerThread(serverSocket.accept()).start();
+							new ServerThread(serverSocket.accept(), analBind, billBind).start();
 						}
 						serverSocket.close();
 					} catch (SocketException e) {

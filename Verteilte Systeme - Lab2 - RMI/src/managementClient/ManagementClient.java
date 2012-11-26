@@ -65,7 +65,7 @@ public class ManagementClient {
 			} catch (AccessException e1) {
 				System.out.println("Access to registry denied.");
 			} catch (NotBoundException e1) {
-				System.out.println("Analytic Server not found.");
+				System.out.println("Billing Server not found.");
 			} catch (RemoteException e1) {
 				System.out.println("Problem finding BillingServer remote object.");
 			}
@@ -134,7 +134,7 @@ public class ManagementClient {
 				} else if (line.equals("!print") && split.length == 1) {
 					EventListener.printBuffer();
 					
-				} else if (line.equals("!subscribe") && split.length == 2) {
+				} else if (line.startsWith("!subscribe") && split.length == 2) {
 					try {
 						eventListener = new EventListener();
 					} catch (RemoteException e) {
@@ -163,7 +163,7 @@ public class ManagementClient {
 					} catch (RemoteException e) {
 						System.out.println("Analytic Server Remote Exception");
 					}
-				} else if (line.equals("!unsubscribe") && split.length == 2) {
+				} else if (line.startsWith("!unsubscribe") && split.length == 2) {
 					String answer = "";
 
 					try {

@@ -87,8 +87,14 @@ public class BiddingClient {
 						userName = "";
 					} else if (line.equals("!list")) {
 						out.println(line);
-					} else if (line.startsWith("!create ") && split.length >= 3 && (Integer.parseInt(split[1]) > 0) && Integer.parseInt(split[1]) < 1000000 ) {
-						out.println(line);
+					} else if ((line.startsWith("!create ")) && (split.length >= 3)) {
+						try {
+							if ((Integer.parseInt(split[1]) > 0) && (Integer.parseInt(split[1]) < 1000000)) {
+								out.println(line);
+							}
+						} catch (NumberFormatException e) {
+							System.out.println("Enter a valid duration");
+						}
 					} else if (line.startsWith("!bid ") && split.length == 3) {
 						out.println(line);
 					} else if (line.equals("!end")) {

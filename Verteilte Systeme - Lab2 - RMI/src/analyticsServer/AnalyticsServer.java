@@ -1,9 +1,14 @@
 package analyticsServer;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.AccessException;
 import java.rmi.ConnectException;
+import java.rmi.NoSuchObjectException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import analyticsServer.AnalyticsRMIInterface;
@@ -18,14 +23,15 @@ public class AnalyticsServer {
 	static int registryPort = 0;
 	static Registry registry;
 	static AnalyticsRMIInterface stub;
-	
+	static BufferedReader stdin = null;
+	static AnalyticsRMIHandler rmiHandler = null;
 	public static void main(String[] args) {
 		if (args.length == 1) {
 			analBind = args[0];
 			
 			readProperties();
 			
-			AnalyticsRMIHandler rmiHandler = new AnalyticsRMIHandler();
+			rmiHandler = new AnalyticsRMIHandler();
 			// Create stub
 				try {
 					stub = (AnalyticsRMIInterface) UnicastRemoteObject.exportObject(rmiHandler, 0);
@@ -45,9 +51,20 @@ public class AnalyticsServer {
 				} catch (RemoteException e) {
 					System.out.println("Could not bind Registry to port " + registryPort);
 				}
-			// To-Do: Implement AnalyticsServer
-		
-		} else {
+				
+				stdin = new BufferedReader(new InputStreamReader(System.in));
+		        String cmd;
+		        try {
+					while ((cmd = stdin.readLine()) != null) {
+						if (cmd.equals("!exit")) {
+							shutdown();
+							break;
+						}
+					}
+				} catch (IOException e) {
+					System.out.println("Error reading IO");
+				}
+			} else {
 			System.out.println("Wrong argument count.");
 		}
 	}
@@ -74,6 +91,23 @@ public class AnalyticsServer {
 			}
 		} else {
 			System.err.println("Properties file not found!");
+		}
+	}
+	private static void shutdown() {
+		try {
+			stdin.close();
+		} catch (IOException e) {
+			System.out.println("Error freeing ressources");
+		}
+		try {
+			registry.unbind(analBind);
+		} catch (Exception e) {
+			System.out.println("Error unbinding registry");
+		}
+		try {
+			 UnicastRemoteObject.unexportObject(rmiHandler, true);
+		} catch (NoSuchObjectException e) {
+			System.out.println("Error unexporting remote object");
 		}
 	}
 }
