@@ -164,6 +164,11 @@ public class ServerThread extends Thread {
 	        		}
 	        	}
 	        }
+	        
+	        //DEBUG
+	        System.out.println("User disconnected?");
+	        //DEBUG
+	        
 	        out.close();
         	in.close();
         	socket.close();
