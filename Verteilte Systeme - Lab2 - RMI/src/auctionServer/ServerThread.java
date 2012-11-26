@@ -117,6 +117,7 @@ public class ServerThread extends Thread {
 		        				System.out.println("Error processing event");
 		        			}
 		        			out.println("Successfully logged in as " + userName + "!");
+                                                //System.out.println("User: "+ userName);
 		        			auctionP.processInput(inputLine);
 		        		} else {
 		        			out.println("User is already logged in!");

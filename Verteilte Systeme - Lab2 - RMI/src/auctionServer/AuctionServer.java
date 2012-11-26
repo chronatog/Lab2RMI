@@ -73,14 +73,20 @@ public class AuctionServer {
 		}
 	}
 	public boolean containsUser(String username) {
-		if (userHostnames.containsKey(username)) {
+            synchronized(userHostnames){
+
+            if (userHostnames.containsKey(username)) {
 			return true;
 		} else {
 			return false;
 		}
+            }
 	}
 	public String userHost(String username) {
-		return userHostnames.get(username);
+            synchronized(userHostnames){
+
+            return userHostnames.get(username);
+            }
 	}
 	/*
 	public int userUdpPort (String username) {
@@ -88,16 +94,20 @@ public class AuctionServer {
 	}
 	*/
 	public void addUser(String username, String hostname, int udpPort) {
-		userHostnames.put(username, hostname);
-		/* Should not be needed anymore
-		userPorts.put(username, udpPort);
-		*/
+            synchronized(userHostnames){
+                userHostnames.put(username, hostname);
+                    /* Should not be needed anymore
+                    userPorts.put(username, udpPort);
+                    */
+             }
 	}
 	public void removeUser(String username) {
-		userHostnames.remove(username);
-		/* Should not be needed anymore
-		userPorts.remove(username);
-		*/
+           synchronized(userHostnames){
+                userHostnames.remove(username);
+                    /* Should not be needed anymore
+                    userPorts.remove(username);
+                    */
+           }
 	}
 }
 class EnterKiller extends Thread {

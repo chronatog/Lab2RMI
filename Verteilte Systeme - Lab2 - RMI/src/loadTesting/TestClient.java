@@ -159,8 +159,8 @@ public class TestClient extends Thread{
         Random rand = new Random();
         //int id = rand.nextInt(auctions-2+1)+2;
 
-        System.out.println("Auctions: "  + auctions);
-        System.out.println("ID: " + ID);
+        //System.out.println("Auctions: "  + auctions);
+        //System.out.println("ID: " + ID);
         String bid = "!bid " +ID+" "+price;
         System.out.println(bid);
         ID++; 
@@ -169,7 +169,7 @@ public class TestClient extends Thread{
 
     private void list() {
         String list = "!list";
-        System.out.println("in der liste");
+        //System.out.println("in der liste");
         out.println(list);
                // read();
 
