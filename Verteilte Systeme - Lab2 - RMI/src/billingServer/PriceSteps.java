@@ -12,6 +12,7 @@ import java.util.ArrayList;
  * @author lisibauernhofer
  */
 public class PriceSteps implements Serializable{
+    private static final long serialVersionUID = -2191451042278513296L;
 
     private ArrayList<PriceStep> priceSteps;
     private boolean deleteStep = false;

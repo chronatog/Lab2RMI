@@ -13,6 +13,7 @@ import java.util.logging.Logger;
  * @author lisibauernhofer
  */
 public class Bill implements Serializable{
+    private static final long serialVersionUID = -3591153286007249479L;
 
     private String user;
     private ArrayList<AuctionBill> auctionBill = new ArrayList<AuctionBill>();
