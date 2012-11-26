@@ -172,29 +172,30 @@ public class AuctionProtocol {
 	    	String auctionOwner = AuctionServer.auctionOwner.get(id);
 	    	Double highestBid = AuctionServer.auctionHighestBid.get(id);
                 long auctionID = id;
-
-                Registry registry;
-                try {
-                    registry = LocateRegistry.getRegistry("localhost", 11319);
-
-                    billingServer = (BillingServer) registry.lookup("BillingServerRef");
-
-                    BillingServerSecure bss =  billingServer.login("auctionServer", "auctionServer123");
-                    billingServerSecure = bss;
-
-                    bss.billAuction(highestBidder, auctionID, highestBid);
+        try {
+            /* Registry registry;
+            try {
+            registry = LocateRegistry.getRegistry("localhost", 11319);
+            billingServer = (BillingServer) registry.lookup("BillingServerRef");
+            BillingServerSecure bss =  billingServer.login("auctionServer", "auctionServer123");
+            billingServerSecure = bss;*/
+            //bss.billAuction(highestBidder, auctionID, highestBid);
+            ServerThread.billingServerSecureHandler.billAuction(highestBidder, auctionID, highestBid);
+        } catch (RemoteException ex) {
+            Logger.getLogger(MyTask.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
 
                 //BillingServerSecure bss;
 
-                } catch (NotBoundException ex) {
+               // } catch (NotBoundException ex) {
                     //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (AccessException ex) {
+                //} catch (AccessException ex) {
                    // Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                catch (RemoteException ex) {
+                //}
+                //catch (RemoteException ex) {
                 //Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-                 }
+                 //}
 	    	
 	    	/* Should be removed, since this is only logic for notifying auction winner and owner
     		

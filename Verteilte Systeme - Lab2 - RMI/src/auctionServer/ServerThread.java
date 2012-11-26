@@ -29,7 +29,7 @@ public class ServerThread extends Thread {
 	protected String analName;
 	protected String billName;
 	protected BillingServer billingServerHandler;
-	protected BillingServerSecure billingServerSecureHandler;
+	public static BillingServerSecure billingServerSecureHandler;
 	protected AnalyticsRMIInterface analyticsHandler;
 	Registry registry = null;
 	protected static String registryHost;
@@ -72,11 +72,13 @@ public class ServerThread extends Thread {
 	        		} catch (NotBoundException e) {
 	        			System.out.println("Analytics Server not bound to the registry");
 	        		}
-	                /*
+
+                                //billingServerLogin();
+	                
 	        		// Bind Billing remote object
 	        		try {
 	        			billingServerHandler = (BillingServer) registry.lookup(billName);
-	        			this.billingServerLogin();
+	        			billingServerLogin();
 	        		} catch (AccessException e) {
 	        			System.out.println("Couldn't access registry");
 	        		} catch (RemoteException e) {
@@ -84,7 +86,7 @@ public class ServerThread extends Thread {
 	        		} catch (NotBoundException e) {
 	        			System.out.println("Billing Server not bound to the registry");
 	        		}
-	        		*/
+	        		
 					if (userName == null) {
 						out.print(">");
 					} else {
@@ -183,7 +185,9 @@ public class ServerThread extends Thread {
 	private void billingServerLogin() {
         if (billingServerHandler != null) {
             try {
-                billingServerSecureHandler = billingServerHandler.login("auctionserver", "supersecure");
+                 BillingServerSecure bss = billingServerHandler.login("auctionServer", "auctionServer123");
+                 billingServerSecureHandler =  bss; 
+
                 if (billingServerSecureHandler == null) {
                     System.out.println("Login to billing server failed");
                 }

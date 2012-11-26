@@ -141,7 +141,7 @@ public class ManagementClient {
 				} else if (line.startsWith("!removeStep") && split.length == 3) {
 			        try {
 			            // Call RemoveStep from Billing Server
-			        	startPrice = Double.parseDouble(split[1]);
+                                    startPrice = Double.parseDouble(split[1]);
 			            endPrice = Double.parseDouble(split[2]);
 			            billingServerSecure.deletePriceStep(startPrice, endPrice);
 			        } catch (RemoteException ex) {
