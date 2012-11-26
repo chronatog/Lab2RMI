@@ -97,27 +97,61 @@ public class ManagementClient {
 				if (line.startsWith("!login ") && split.length == 3) {
 					userName = split[1];
 					userPwd = split[2];
-					login(userName, userPwd);
+                                        BillingServerSecure bss;
+					try {
+                                            bss = billingServer.login(userName, userPwd);
+                                            billingServerSecure = bss;
+                                        // Store Secure - object if it worked
+                                        // Store Secure - object if it worked
+                                            if(bss != null){
+                                                System.out.println(userName + " successfully logged in");
+                                            }
+                                        } catch (RemoteException ex) {
+                                            System.out.println("Login failed");
+                                        }
 				
 				} else if (line.equals("!steps") && split.length == 1) {
-					steps();
+					String steps;
+                                        try {
+                                            steps = billingServerSecure.getPriceSteps().toString();
+                                            System.out.println(steps);
+
+                                        } catch (RemoteException ex) {
+                                            System.out.println("There are no price steps");
+                                        }
 				
 				} else if (line.startsWith("!addStep") && split.length == 5) {
 					startPrice 			= Double.parseDouble(split[1]);
 					endPrice   			= Double.parseDouble(split[2]);
 					fixedPrice 			= Double.parseDouble(split[3]);
 					variablePrice 		= Double.parseDouble(split[4]);
-					addPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
-				
+                                        try {
+                                            // Add step to BillingServer
+                                            billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
+                                        } catch (RemoteException ex) {
+                                            System.out.println("BillingSeverSecure Remote Exception");
+                                        }
 				} else if (line.startsWith("!removeStep") && split.length == 3) {
 					startPrice = Double.parseDouble(split[1]);
-                    endPrice = Double.parseDouble(split[2]);
-                    removeStep(startPrice, endPrice);
+                                        endPrice = Double.parseDouble(split[2]);
+                                        try {
+                                            // Call RemoveStep from Billing Server
+                                            billingServerSecure.deletePriceStep(startPrice, endPrice);
+                                        } catch (RemoteException ex) {
+                                            System.out.println("BillingSeverSecure Remote Exception");
+                                        }
+
 				
 				} else if (line.startsWith("!bill") && split.length == 2) {
 					userBill = split[1];
-					bill(userBill);              
-				
+                                        String bill;
+                                        try {
+                                            bill = billingServerSecure.getBill(userBill).toString();
+                                            System.out.println(bill);
+
+                                        } catch (RemoteException ex) {
+                                            System.out.println("BillingSeverSecure Remote Exception");
+                                        }
 				} else if (line.equals("!logout") && split.length == 1) {
 					logout();
 				
