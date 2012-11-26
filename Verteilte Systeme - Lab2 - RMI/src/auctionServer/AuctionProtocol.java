@@ -33,7 +33,7 @@ public class AuctionProtocol {
 		} else if (command.equals("!list")) {
 			
 			// Added synchronized block, is "this" correct?
-			synchronized(this) {
+			synchronized(AuctionServer.auctionDescription) {
 				Iterator<?> iter = AuctionServer.auctionDescription.entrySet().iterator();
 				
 				while (iter.hasNext()) {

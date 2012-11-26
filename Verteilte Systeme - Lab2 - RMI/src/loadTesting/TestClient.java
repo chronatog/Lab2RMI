@@ -153,15 +153,15 @@ public class TestClient extends Thread{
    }
 
     private void bid() {
-        int auctions = auctionNr * 2;
+        int auctions = auctionNr * clientAll;
         long time = new Date().getTime() - startTime;
         double price = time/10;
         Random rand = new Random();
-        //int id = rand.nextInt(auctions-2+1)+2;
+        int id = rand.nextInt(auctions);
 
         //System.out.println("Auctions: "  + auctions);
         //System.out.println("ID: " + ID);
-        String bid = "!bid " +ID+" "+price;
+        String bid = "!bid " +id+" "+price;
         System.out.println(bid);
         ID++; 
         out.println(bid);
