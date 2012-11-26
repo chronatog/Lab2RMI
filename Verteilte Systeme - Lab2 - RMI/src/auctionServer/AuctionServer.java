@@ -17,14 +17,14 @@ import java.util.Map;
 public class AuctionServer {
 
 	public static int tcpPort;
-	
+
 	public static Map<String, String> userHostnames = Collections.synchronizedMap(new HashMap<String, String>());
 	public static Map<String, String> userMissed = Collections.synchronizedMap(new HashMap<String, String>());
-	
+
 	/* Should not be needed anymore
 	public static Map<String, Integer> userPorts = Collections.synchronizedMap(new HashMap<String, Integer>());
-	*/
-	
+	 */
+
 	public static Map<Integer, String> auctionDescription = Collections.synchronizedMap(new HashMap<Integer, String>());
 	public static Map<Integer, Timestamp> auctionEndtime = Collections.synchronizedMap(new HashMap<Integer, Timestamp>());
 	public static Map<Integer, Double> auctionHighestBid = Collections.synchronizedMap(new HashMap<Integer, Double>());
@@ -33,38 +33,38 @@ public class AuctionServer {
 	public static int auctionCounter = 0;
 	public static boolean listening;
 	public static ServerSocket serverSocket;
-	
+
 	public static void main(String[] args) {
 		if (args.length == 3) {
 			tcpPort = Integer.parseInt(args[0]);
 			String analBind = args[1];
 			String billBind = args[2];
-			
+
 			if (tcpPort >= 1024 || tcpPort >= 65535) {
 				serverSocket = null;
 				listening = true;
-				
+
 				try {
-		            serverSocket = new ServerSocket(tcpPort);
-		        } catch (IOException e) {
-		            System.err.println("Could not listen on port: " + tcpPort + ".");
-		        }
+					serverSocket = new ServerSocket(tcpPort);
+				} catch (IOException e) {
+					System.err.println("Could not listen on port: " + tcpPort + ".");
+				}
 				try {
 					(new EnterKiller()).start();
-					
+
 					while (listening)
-						{
-							new ServerThread(serverSocket.accept(), analBind, billBind).start();
-						}
-						serverSocket.close();
-					} catch (SocketException e) {
-						// TODO Auto-generated catch block
-						System.out.println("Socket was closed...stopped accepting requests.");
-						System.exit(0);
-					} catch (Exception e) {
-						System.out.println("Error with Socket");
-						System.exit(-1);
+					{
+						new ServerThread(serverSocket.accept(), analBind, billBind).start();
 					}
+					serverSocket.close();
+				} catch (SocketException e) {
+					// TODO Auto-generated catch block
+					System.out.println("Socket was closed...stopped accepting requests.");
+					System.exit(0);
+				} catch (Exception e) {
+					System.out.println("Error with Socket");
+					System.exit(-1);
+				}
 			} else {
 				System.out.println("Wrong argument value.");
 			}
@@ -73,41 +73,41 @@ public class AuctionServer {
 		}
 	}
 	public boolean containsUser(String username) {
-            synchronized(userHostnames){
+		synchronized(userHostnames){
 
-            if (userHostnames.containsKey(username)) {
-			return true;
-		} else {
-			return false;
+			if (userHostnames.containsKey(username)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
-            }
 	}
 	public String userHost(String username) {
-            synchronized(userHostnames){
+		synchronized(userHostnames){
 
-            return userHostnames.get(username);
-            }
+			return userHostnames.get(username);
+		}
 	}
 	/*
 	public int userUdpPort (String username) {
 		return userPorts.get(username);
 	}
-	*/
+	 */
 	public void addUser(String username, String hostname, int udpPort) {
-            synchronized(userHostnames){
-                userHostnames.put(username, hostname);
-                    /* Should not be needed anymore
+		synchronized(userHostnames){
+			userHostnames.put(username, hostname);
+			/* Should not be needed anymore
                     userPorts.put(username, udpPort);
-                    */
-             }
+			 */
+		}
 	}
 	public void removeUser(String username) {
-           synchronized(userHostnames){
-                userHostnames.remove(username);
-                    /* Should not be needed anymore
+		synchronized(userHostnames){
+			userHostnames.remove(username);
+			/* Should not be needed anymore
                     userPorts.remove(username);
-                    */
-           }
+			 */
+		}
 	}
 }
 class EnterKiller extends Thread {
@@ -122,12 +122,12 @@ class EnterKiller extends Thread {
 				// Close ressources?
 				System.exit(-1);
 			}
-			
-			
+
+
 			if (line.equals("")) {
 				if (!AuctionServer.userHostnames.isEmpty()) {
 					/*	To-Do: Add shutdown handling: Log out all users, free ressources 
-					
+
 					// If there are logged in users
 					Iterator<?> iter = Server.userHostnames.entrySet().iterator();
 					while (iter.hasNext()) {
@@ -135,11 +135,11 @@ class EnterKiller extends Thread {
 						String hostname = entry.getValue().toString();
 						String username = entry.getKey().toString();
 						int port = Server.userPorts.get(entry.getKey());
-						
+
 						//DEBUG
 						System.out.println("Current user name: " + username);
 						//DEBUG
-						
+
 						// Connect to Socket, send Logoff - message
 						Socket socket = null;
 				        PrintWriter out = null;
@@ -147,7 +147,7 @@ class EnterKiller extends Thread {
 						try {
 							//DEBUG
 							System.out.println("Trying to establish connection to client. Host: " + hostname + ", port: " + port);
-							
+
 							socket = new Socket(hostname, port);
 				            out = new PrintWriter(socket.getOutputStream(), true);
 				            System.out.print("You have been logged out.");
@@ -160,11 +160,11 @@ class EnterKiller extends Thread {
 				            System.exit(1);
 				        }
 					}
-					*/
-					
+					 */
+
 				}
 				try {
-					
+
 					AuctionServer.serverSocket.close();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -172,6 +172,6 @@ class EnterKiller extends Thread {
 				AuctionServer.listening = false;
 			}
 		}
-		
-    }
+
+	}
 }

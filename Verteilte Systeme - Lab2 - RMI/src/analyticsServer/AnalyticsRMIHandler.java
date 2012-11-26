@@ -20,7 +20,7 @@ import event.StatisticsEvent;
 import event.UserEvent;
 
 public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
-	
+
 	Pattern pattern;
 
 	List<Subscription> subscriptionList = Collections.synchronizedList(new ArrayList<Subscription>());
@@ -39,16 +39,16 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 	StatisticsEvent minSessionTime = null;
 	StatisticsEvent avgSessionTime = null;
 	StatisticsEvent maxSessionTime = null;
-	
+
 	int auctionCounter = 0;
 	int auctionsSucceded = 0;
 	int bidCounter = 0;
 	int auctionDurationMultiplicator = 0;
 	int sessiontimeAvgMultiplicator = 0;
-	
+
 	Timestamp systemStartT = new Timestamp(System.currentTimeMillis());
 	long systemStart = systemStartT.getTime();
-	
+
 	public String subscribe(EventInterface eventListener, String regex) throws RemoteException {
 		// Mgmt clients call this to subscribe to events
 		try {
@@ -79,9 +79,9 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		return "Function call works!";
 	}
 	public void processEvent(Event event)  throws RemoteException {
-		
+
 		System.out.println("Processing " + event.getClass() + " Event, event type: " + event.getType());
-		
+
 		if (event instanceof AuctionEvent) {
 			processAuctionEvent((AuctionEvent)event);
 		} else if (event instanceof BidEvent) {
@@ -120,11 +120,11 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			EventInterface eventListener = null;
 			try {
 				eventListener = it.next();
-				
+
 				// Debug
-					System.out.println("Found EventListener to notify");
+				System.out.println("Found EventListener to notify");
 				//
-				
+
 				eventListener.processEvent(event);
 			} catch (RemoteException e) {
 				offlineList.add(eventListener);
@@ -140,14 +140,14 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		}
 		offlineList.clear();
 		notificationListEvent.clear();
-}
+	}
 
 	private void processAuctionEvent(AuctionEvent event) {
-		
+
 		if (event.getType().equals("AUCTION_STARTED")) {
 			auctionList.add(event);
 		}
-		
+
 		if (event.getType().equals("AUCTION_ENDED")) {
 			if (avgAuctionDuration == null) {
 				Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
@@ -232,8 +232,8 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		}
 
 		if (event.getType().equals("USER_LOGOUT") || event.getType().equals("USER_DISCONNECTED")) {
-			
-			
+
+
 			// get login event and session time
 			UserEvent loginEvent;
 			long difference = 0;
@@ -304,16 +304,16 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			}
 		}
 
-					
+
 	}
-	
+
 	private void notifyManagementClients(Event event) {
 		List<EventInterface> deleteList = new ArrayList<EventInterface>();
 		List<EventInterface> notificationListForThisEvent = new ArrayList<EventInterface>(); 
 		Iterator<Subscription> iterator = subscriptionList.iterator();
 
 		System.out.println("Request to notify management client");
-		
+
 		while (iterator.hasNext()) {
 			Subscription subscription = iterator.next();
 
@@ -323,16 +323,16 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			EventInterface eventListener = subscription.getEventListener();
 
 			if (matcher.find()) {
-				
+
 				System.out.println("Subscription could be matched!");
-				
+
 				if (!notificationListForThisEvent.isEmpty()) {
 					if (!notificationListForThisEvent.contains(eventListener)) {
 						System.out.println("EventListener will notify");
 						notificationListForThisEvent.add(eventListener);
 					} 
 
-				// zero eventListeners in the notification List
+					// zero eventListeners in the notification List
 				} else {
 					System.out.println("EventListener will notify");
 					notificationListForThisEvent.add(subscription.getEventListener());
