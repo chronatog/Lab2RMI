@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  *
@@ -18,7 +19,6 @@ public class PriceSteps implements Serializable{
     private boolean deleteStep = false;
     public PriceSteps() {
         priceSteps = new ArrayList<PriceStep>();
-
     }
 
 
@@ -64,7 +64,7 @@ public class PriceSteps implements Serializable{
          
          synchronized(priceSteps){
              for(PriceStep helpPS: priceSteps){
-                if(price > helpPS.getMinPrice()&&price <= helpPS.getMaxPrice()){
+                if(price > helpPS.getMinPrice() && helpPS.getMaxPrice()==0 || price <= helpPS.getMaxPrice()){
                     return helpPS.getFeeFixed();
                 }
             }  return 0;
@@ -74,7 +74,7 @@ public class PriceSteps implements Serializable{
      public double getFeeVariableByPrice(double price){
         synchronized(priceSteps){
             for(PriceStep helpPS: priceSteps){
-                if(price > helpPS.getMinPrice()&&price <= helpPS.getMaxPrice()){
+                if(price > helpPS.getMinPrice()&& helpPS.getMaxPrice()==0 || price <= helpPS.getMaxPrice()){
                     return helpPS.getFeeVariable();
                 }
             }  return 0;

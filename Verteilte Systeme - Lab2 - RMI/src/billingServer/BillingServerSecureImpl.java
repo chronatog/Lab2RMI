@@ -22,7 +22,7 @@ public class BillingServerSecureImpl implements BillingServerSecure{
 
     @Override
     public PriceSteps getPriceSteps() throws RemoteException {
-
+        
         return BillingServerSecureImpl.priceSteps;
     }
 
