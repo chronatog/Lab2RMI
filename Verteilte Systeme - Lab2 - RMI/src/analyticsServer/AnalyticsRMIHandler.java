@@ -80,6 +80,8 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 	}
 	public void processEvent(Event event)  throws RemoteException {
 		
+		System.out.println("Processing " + event.getClass() + " Event, event type: " + event.getType());
+		
 		if (event instanceof AuctionEvent) {
 			processAuctionEvent((AuctionEvent)event);
 		} else if (event instanceof BidEvent) {

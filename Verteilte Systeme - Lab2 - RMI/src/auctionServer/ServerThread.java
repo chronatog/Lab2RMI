@@ -107,6 +107,7 @@ public class ServerThread extends Thread {
 		        			
 		        			AuctionServer.userHostnames.put(userName, socket.getInetAddress().getHostAddress());
 
+		        			// Call ProcessEvent from AnalyticsHandler for LOGIN Event
 		        			Timestamp logoutTimestamp = new Timestamp(System.currentTimeMillis());
 		        			long timestamp = logoutTimestamp.getTime();
 		        			try {
@@ -116,8 +117,8 @@ public class ServerThread extends Thread {
 		        			} catch (Exception e) {
 		        				System.out.println("Error processing event");
 		        			}
+		        			
 		        			out.println("Successfully logged in as " + userName + "!");
-                                                //System.out.println("User: "+ userName);
 		        			auctionP.processInput(inputLine);
 		        		} else {
 		        			out.println("User is already logged in!");
@@ -130,6 +131,17 @@ public class ServerThread extends Thread {
 	        			loggedIn = false;
 	        			AuctionServer.userHostnames.remove(userName);
 	        			
+	        			// Call ProcessEvent from AnalyticsHandler for LOGOUT Event
+	        			Timestamp logoutTimestamp = new Timestamp(System.currentTimeMillis());
+	        			long timestamp = logoutTimestamp.getTime();
+        				try {
+							analyticsHandler.processEvent(new UserEvent("USER_LOGOUT", timestamp, userName));
+						} catch (RemoteException e) {
+	        				System.out.println("Couldn't connect to Analytics Server");
+	        			} catch (Exception e) {
+	        				System.out.println("Error processing event");
+	        			}
+        				
 	        			out.println("Successfully logged out as " + userName + "!");
 		        		
 		        		userName = null;

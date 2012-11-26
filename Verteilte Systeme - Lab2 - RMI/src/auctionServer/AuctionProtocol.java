@@ -153,33 +153,10 @@ public class AuctionProtocol {
                                }
                             }
                         }
-	}//end bid
+	}
 	return "";
 	}
-	/* Should not be needed anymore since clients are not notified by UDP anymore (or notified at all?)
-	protected static void notifyClient(String message, String name) {
-		byte[] buf = message.getBytes();
-		try {
-			if (AuctionServer.userHostnames.containsKey(name)) {
-				InetAddress address = InetAddress.getByName(AuctionServer.userHostnames.get(name));
-	    		
-	    		DatagramPacket testPacket = new DatagramPacket(buf, buf.length, address, AuctionServer.userPorts.get(name));
-	    		DatagramSocket dsocket = new DatagramSocket();
-	    	    dsocket.send(testPacket);
-	    	    dsocket.close();
-	    		
-	    	    InetAddress hostAddress = InetAddress.getByName(AuctionServer.userHostnames.get(name));
-			} else {
-				//maybe usersMissed needs to be initialized with ""?
-				AuctionServer.userMissed.get(name).concat(message + "\n");
-			}
-		} catch (Exception e) {
-			System.out.println("Error sending Test UDP packet.");
-		}
-	}
-	*/
-    		
-	}
+}
 	class MyTask extends TimerTask {
 	 private int id;
          static BillingServer billingServer = null;
