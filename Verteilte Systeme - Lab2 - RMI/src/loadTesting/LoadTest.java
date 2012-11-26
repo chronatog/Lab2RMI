@@ -41,7 +41,7 @@ public class LoadTest {
              startTime = new Date().getTime();
 
              String[] argsh;
-             argsh= new String[] {analBindingName, billBindingName};
+             argsh= new String[] {analBindingName, billBindingName, "!subscribe .*"};
              //System.out.println("L€NGE: "+argsh.length);
 
             //ManagementClient mC = new ManagementClient();
