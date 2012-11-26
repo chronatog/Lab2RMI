@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 package billingServer;
 
@@ -18,31 +15,26 @@ import java.util.logging.Logger;
 public class Bill implements Serializable{
 
     private String user;
-   // private ArrayList<UserBill> userbill;
     private ArrayList<AuctionBill> auctionBill = new ArrayList<AuctionBill>();
 
     public Bill(String user, ArrayList<UserBill> userbill, PriceSteps priceStep){
-        //PriceSteps step = new PriceSteps();
-        //PriceStep step = sp.new PriceStep();
+        
+        synchronized(auctionBill){
+            for(int i = 0; i < userbill.size(); i++){
+                if(userbill.get(i).user.equals(user)){
 
-        for(int i = 0; i < userbill.size(); i++){
-
-            if(userbill.get(i).user.equals(user)){
-
-               long auctionID = userbill.get(i).auctionID;
-
-               double price = userbill.get(i).price;
-
-               
+                   long auctionID = userbill.get(i).auctionID;
+                   double price = userbill.get(i).price;
                    double feeFix = priceStep.getFeeFixByPrice(price);
                    double feeFree = ((price*priceStep.getFeeVariableByPrice(price)/100));
                    double feeTotal = feeFix+feeFree;
                    AuctionBill auctionbillstub = new AuctionBill(auctionID, price, feeFix, feeFree, feeTotal);
                    auctionBill.add(auctionbillstub);
-                
 
-            } else System.out.println("No Auctions for this user");
-        }
+
+                } else System.out.println("No Auctions for this user");
+            }
+         }
     }
 
 
@@ -51,15 +43,14 @@ public class Bill implements Serializable{
     public String toString(){
         String liste = "";
         String header = "auction_ID\tstrike_price\tfee_fixed\tfee_variable\tfee_total";
+        synchronized(auctionBill){
 
-        for(AuctionBill auction : auctionBill){
+            for(AuctionBill auction : auctionBill){
 
-            liste += auction.formatAuctionBill() +"\n";
-            //System.out.println("Liste: "+ liste);
-
-
+                liste += auction.formatAuctionBill() +"\n";
+            }
+            return header + "\n" + liste;
         }
-        return header + "\n" + liste;
     }
 
 

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package billingServer;
 import java.io.IOException;
@@ -50,21 +46,34 @@ public class BillingServerImpl implements BillingServer{
                 }
                 registry.rebind(bindingName, billingStub);
 
+                try {
+                System.in.read();
+                } catch (IOException ex) {
+                }
+
+                System.out.println("down...");
+                try {
+                    registry.unbind(bindingName);
+                    UnicastRemoteObject.unexportObject(billingserver, true);
+                    UnicastRemoteObject.unexportObject(registry, true);
+
+                    //System.exit(-1);
+                } catch (NotBoundException ex) {
+                } catch (AccessException ex) {
+                }
 
 
             } catch (RemoteException ex) {
-                Logger.getLogger(BillingServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(BillingServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-          
-
             
         }else{
             System.out.println("Wrong argument count.");
         }
+        
     }
 
-
+    //read registryProperties
     private static void readProperties(){
         InputStream in = ClassLoader.getSystemResourceAsStream("registry.properties");
         if(in!=null){
@@ -74,19 +83,17 @@ public class BillingServerImpl implements BillingServer{
                 try {
                     props.load(in);
                 } catch (IOException ex) {
-                    //Logger.getLogger(BillingServerMain.class.getName()).log(Level.SEVERE, null, ex);
                     System.out.println("Error:Loding Properties-File");
                 }
 
                 registryHost = props.getProperty("registry.host");
-
                 registryPort = Integer.parseInt(props.getProperty("registry.port"));
 
            }finally{
                 try {
                     in.close();
                 } catch (IOException ex) {
-                    //Logger.getLogger(BillingServerMain.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("Error: Closing InputStream");
                 }
 
            }
@@ -98,17 +105,11 @@ public class BillingServerImpl implements BillingServer{
     //
    @Override
    public BillingServerSecure login(String username, String password) throws RemoteException{
-       /*DEBUG
-	   System.out.println("Login received, username: " + username);
-	   System.out.println("password: " + password);
-	   DEBUG
-	   */
-	   
-	   String psw = readProperties(username);
+       	   
+       String psw = readProperties(username);
        String passwordhash = pwtoMD5(password);
 
        if(psw.equals(passwordhash)){
-           //sollte loggerausgabe sein!!!
             BillingServerSecure billingServerSecure = new BillingServerSecureImpl();
             BillingServerSecure billingServerSecureStub = (BillingServerSecure) UnicastRemoteObject.exportObject(billingServerSecure, 0);
             return billingServerSecureStub;
@@ -127,7 +128,7 @@ public class BillingServerImpl implements BillingServer{
 
        return null;
    }
-
+   //read UserProperties
    private String readProperties(String username){
         InputStream in = ClassLoader.getSystemResourceAsStream("user.properties");
         if(in!=null){
@@ -137,7 +138,6 @@ public class BillingServerImpl implements BillingServer{
                 try {
                     props.load(in);
                 } catch (IOException ex) {
-                    //Logger.getLogger(BillingServerMain.class.getName()).log(Level.SEVERE, null, ex);
                     System.out.println("Error:Loding Properties-File");
                 }
 
@@ -147,7 +147,7 @@ public class BillingServerImpl implements BillingServer{
                 try {
                     in.close();
                 } catch (IOException ex) {
-                   // Logger.getLogger(BillingServerMain.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("Error: Closing InputStream");
                 }
 
            }
@@ -172,6 +172,7 @@ public class BillingServerImpl implements BillingServer{
         return null; 
 
    }
+
 
    
 

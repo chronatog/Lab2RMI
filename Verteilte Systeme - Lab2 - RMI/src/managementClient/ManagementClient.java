@@ -129,7 +129,7 @@ public class ManagementClient {
                                             // Add step to BillingServer
                                             billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
                                         } catch (RemoteException ex) {
-                                            System.out.println("BillingSeverSecure Remote Exception");
+                                            System.out.println(ex);
                                         }
 				} else if (line.startsWith("!removeStep") && split.length == 3) {
 					startPrice = Double.parseDouble(split[1]);
@@ -138,7 +138,7 @@ public class ManagementClient {
                                             // Call RemoveStep from Billing Server
                                             billingServerSecure.deletePriceStep(startPrice, endPrice);
                                         } catch (RemoteException ex) {
-                                            System.out.println("BillingSeverSecure Remote Exception");
+                                            System.out.println(ex);
                                         }
 
 				
