@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 package billingServer;
 
@@ -18,10 +15,7 @@ import java.util.logging.Logger;
  * @author lisibauernhofer
  */
 public class BillingServerSecureImpl implements BillingServerSecure{
-
-    /**
-     * @param args the command line arguments
-     */
+  
      private static PriceSteps priceSteps = new PriceSteps();
      private static ArrayList<UserBill> userBill = new ArrayList<UserBill>();
 
@@ -63,11 +57,6 @@ public class BillingServerSecureImpl implements BillingServerSecure{
         return new Bill(user, userBill, priceSteps);
        
     }
-
-
-
-
-
 
 
 
