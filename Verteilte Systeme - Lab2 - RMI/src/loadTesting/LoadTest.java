@@ -17,6 +17,7 @@ public class LoadTest {
     private static String host = "";
     private static int port = 0;
     private static String analBindingName = "";
+    private static String billBindingName = "";
     private static int clientNr = 0;
     private static int auctionPerMin = 0;
     private static int auctionDuration = 0;
@@ -24,22 +25,30 @@ public class LoadTest {
     private static int bidsPerMin = 0;
     private static ArrayList<TestClient> testClient = null;
     private static long startTime;
-
+    private static TestMC testMC;
     
     public static void main(String[] args) {
 
-        if (args.length == 3) {
+        if (args.length == 4) {
             host = args[0];
             port = Integer.parseInt(args[1]);
             analBindingName = args[2];
+            billBindingName = args[3];
 
             readProperties();
 
             testClient = new ArrayList<TestClient>();
              startTime = new Date().getTime();
 
+             String[] argsh;
+             argsh= new String[] {analBindingName, billBindingName};
+             System.out.println("L€NGE: "+argsh.length);
+
             //ManagementClient mC = new ManagementClient();
-            //ManagementClient.main(null);
+            //ManagementClient.main(analBindingName, billBindingName);
+            //ManagementClient.main(argsh);
+             testMC = new TestMC(argsh);
+             testMC.start();
 
             for(int client = 0; client<clientNr; client++){
 
