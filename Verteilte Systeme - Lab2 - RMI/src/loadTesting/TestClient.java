@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Random;
 import java.util.Timer;
@@ -155,7 +156,13 @@ public class TestClient extends Thread{
     private void bid() {
         int auctions = auctionNr * clientAll;
         long time = new Date().getTime() - startTime;
-        double price = time/10;
+        double price = time/10.0f;
+
+
+       // System.out.println(price);
+        price = price * 100;
+        price = Math.round(price);
+        price = price/100;
         Random rand = new Random();
         int id = rand.nextInt(auctions);
 
