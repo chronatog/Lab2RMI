@@ -82,11 +82,9 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		
 		if (event instanceof AuctionEvent) {
 			processAuctionEvent((AuctionEvent)event);
-		}
-		if (event instanceof BidEvent) {
+		} else if (event instanceof BidEvent) {
 			processBidEvent((BidEvent)event);
-		}
-		if (event instanceof UserEvent) {
+		} else if (event instanceof UserEvent) {
 			processUserEvent((UserEvent)event);
 		}
 
@@ -107,21 +105,24 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 					if (!notificationListEvent.contains(eventListener)) {
 						System.out.println("EventListener will notify");
 						notificationListEvent.add(eventListener);
-					} // else ignore -> notification already in list
-
-				// zero eventListeners in the notification List
+					} 
 				} else {
 					System.out.println("EventListener will notify");
-					notificationListEvent.add(subscription.getEventListener());
+					notificationListEvent.add(eventListener);
 				}
 			}
 		}
 
-		Iterator<EventInterface> notifyer = notificationListEvent.iterator();
-		while (notifyer.hasNext()) {
+		Iterator<EventInterface> it = notificationListEvent.iterator();
+		while (it.hasNext()) {
 			EventInterface eventListener = null;
 			try {
-				eventListener = notifyer.next();
+				eventListener = it.next();
+				
+				// Debug
+					System.out.println("Found EventListener to notify");
+				//
+				
 				eventListener.processEvent(event);
 			} catch (RemoteException e) {
 				offlineList.add(eventListener);
@@ -226,16 +227,10 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 	private void processUserEvent(UserEvent event) {
 		if (event.getType().equals("USER_LOGIN")) {
 			userList.add(event);
-			
-			// Test, not sure about this
-			notifyManagementClients(event);
-			//
 		}
 
 		if (event.getType().equals("USER_LOGOUT") || event.getType().equals("USER_DISCONNECTED")) {
-			// Test, not sure about this
-			notifyManagementClients(event);
-			//
+			
 			
 			// get login event and session time
 			UserEvent loginEvent;
@@ -343,11 +338,11 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			}
 		}
 
-		Iterator<EventInterface> notifyer = notificationListForThisEvent.iterator();
-		while (notifyer.hasNext()) {
+		Iterator<EventInterface> it = notificationListForThisEvent.iterator();
+		while (it.hasNext()) {
 			EventInterface eventListener = null;
 			try {
-				eventListener = notifyer.next();
+				eventListener = it.next();
 				eventListener.processEvent(event);
 			} catch (RemoteException e) {
 				deleteList.add(eventListener);
