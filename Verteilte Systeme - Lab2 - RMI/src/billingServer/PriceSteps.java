@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package billingServer;
 
@@ -16,11 +12,12 @@ import java.util.ArrayList;
  * @author lisibauernhofer
  */
 public class PriceSteps implements Serializable{
+    private static final long serialVersionUID = -2191451042278513296L;
 
-    private ArrayList<PriceStep> PriceSteps;
-
+    private ArrayList<PriceStep> priceSteps;
+    private boolean deleteStep = false;
     public PriceSteps() {
-        PriceSteps = new ArrayList<PriceStep>();
+        priceSteps = new ArrayList<PriceStep>();
 
     }
 
@@ -34,40 +31,54 @@ public class PriceSteps implements Serializable{
 
         PriceStep newPS = new PriceStep(startPrice, endPrice,fixedPrice,variablePricePercent);
 
-        for (PriceStep helpPS : PriceSteps){
-            if(newPS.collide(helpPS)== true){
-                throw new RemoteException("The price interval collides with an existing price step");
+        synchronized(priceSteps){
+            for (PriceStep helpPS : priceSteps){
+                if(newPS.collide(helpPS)== true){
+                    throw new RemoteException("The price interval collides with an existing price step");
+                }
             }
+            this.priceSteps.add(newPS);
         }
-        this.PriceSteps.add(newPS);
 
     }
 
     void deleteStep(double startPrice, double endPrice) throws RemoteException {
-        for (int i = 0; i< PriceSteps.size(); i++){
-            if(PriceSteps.get(i).minPrice == startPrice && PriceSteps.get(i).maxPrice == endPrice){
-                PriceSteps.remove(i);
-            } else throw new RemoteException("The price step does not exist");
+        deleteStep = false;
 
+        synchronized(priceSteps){
+            for (int i = 0; i< priceSteps.size(); i++){
+                if(priceSteps.get(i).minPrice == startPrice && priceSteps.get(i).maxPrice == endPrice){
+                    priceSteps.remove(i);
+                    deleteStep = true;
+                }
+            }
+        }
+        if(deleteStep == false){
+            throw new RemoteException("The price step does not exist");
         }
     }
 
      
 
      public double getFeeFixByPrice(double price){
-        for(PriceStep helpPS: PriceSteps){
-            if(price > helpPS.getMinPrice()&&price <= helpPS.getMaxPrice()){
-                return helpPS.getFeeFixed();
-            }
-        }  return 0;
+         
+         synchronized(priceSteps){
+             for(PriceStep helpPS: priceSteps){
+                if(price > helpPS.getMinPrice()&&price <= helpPS.getMaxPrice()){
+                    return helpPS.getFeeFixed();
+                }
+            }  return 0;
+         }
      }
 
      public double getFeeVariableByPrice(double price){
-        for(PriceStep helpPS: PriceSteps){
-            if(price > helpPS.getMinPrice()&&price <= helpPS.getMaxPrice()){
-                return helpPS.getFeeVariable();
-            }
-        }  return 0;
+        synchronized(priceSteps){
+            for(PriceStep helpPS: priceSteps){
+                if(price > helpPS.getMinPrice()&&price <= helpPS.getMaxPrice()){
+                    return helpPS.getFeeVariable();
+                }
+            }  return 0;
+        }
      }
 
 
@@ -77,14 +88,16 @@ public class PriceSteps implements Serializable{
     public String toString(){
         String liste = "";
         String header = "Min_Price\tMax_Price\tFee_Fixed\tFee_variable";
+        synchronized(priceSteps){
 
-        for(PriceStep pricestep : PriceSteps){
+            for(PriceStep pricestep : priceSteps){
 
-            liste += pricestep.formatPriceStep() +"\n";
+                liste += pricestep.formatPriceStep() +"\n";
 
 
+            }
+            return header + "\n"+ liste;
         }
-        return header + "\n"+ liste;
     }
 
 
@@ -114,7 +127,12 @@ public class PriceSteps implements Serializable{
         //%.2f -> Fliesskommerzahl die auf 2 Stellen gerundet wird
         //\t -> Tab
         //%% Prozentzeichen
-        return String.format(" %.2f\t    %.2f\t    %.1f\t     %.1f%%",minPrice, maxPrice, feeFixed, feeVariable);
+            if(maxPrice == 0){
+                return String.format(" %.2f\t    INFINITY\t %.1f\t     %.1f%%",minPrice, feeFixed, feeVariable);
+            } else {
+                return String.format(" %.2f\t    %.2f\t    %.1f\t     %.1f%%",minPrice, maxPrice, feeFixed, feeVariable);
+
+            }
 
 
         }
@@ -159,7 +177,6 @@ public class PriceSteps implements Serializable{
 
         
     }
-
 
 
 }
