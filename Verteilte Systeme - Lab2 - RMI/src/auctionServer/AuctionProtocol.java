@@ -197,18 +197,6 @@ class MyTask extends TimerTask {
 			Logger.getLogger(MyTask.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
-
-		//BillingServerSecure bss;
-
-		// } catch (NotBoundException ex) {
-		//Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-		//} catch (AccessException ex) {
-		// Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-		//}
-		//catch (RemoteException ex) {
-		//Logger.getLogger(ManagementClient.class.getName()).log(Level.SEVERE, null, ex);
-		//}
-
 		/* Should be removed, since this is only logic for notifying auction winner and owner
 
     		String winString = "!auction-ended " + highestBidder + " " + highestBid.toString() + " " + AuctionServer.auctionDescription.get(id);
