@@ -42,7 +42,7 @@ public class LoadTest {
 
              String[] argsh;
              argsh= new String[] {analBindingName, billBindingName};
-             System.out.println("L€NGE: "+argsh.length);
+             //System.out.println("L€NGE: "+argsh.length);
 
             //ManagementClient mC = new ManagementClient();
             //ManagementClient.main(analBindingName, billBindingName);

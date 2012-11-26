@@ -74,8 +74,6 @@ public class TestClient extends Thread{
 
         login();
 
-     
-
       // scheduling the task creat at fixed rate
       //  1min = 60 s = 60000 ms
       Timer timerCreate = new Timer();
@@ -107,8 +105,6 @@ public class TestClient extends Thread{
               }
       ,new Date(),1000);*/
 
-
-
       // scheduling the task bid at fixed rate
       //  1min = 60 s = 60000 ms
       if(createAuction == true){
@@ -121,11 +117,7 @@ public class TestClient extends Thread{
                     }
               }
             ,new Date(),60000/bidsPerMin);
-
       }
-
-
-
    }
 
     
@@ -169,7 +161,7 @@ public class TestClient extends Thread{
         //System.out.println("Auctions: "  + auctions);
         //System.out.println("ID: " + ID);
         String bid = "!bid " +id+" "+price;
-        System.out.println(bid);
+        //System.out.println(bid);
         ID++; 
         out.println(bid);
     }
@@ -179,7 +171,6 @@ public class TestClient extends Thread{
         //System.out.println("in der liste");
         out.println(list);
                // read();
-
         
     }
 

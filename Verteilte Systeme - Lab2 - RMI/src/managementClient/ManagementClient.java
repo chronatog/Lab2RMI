@@ -84,8 +84,10 @@ public class ManagementClient {
 			
 			while (true) {
 				try {
+                                        //if(stdin.readLine()!=null){
 					System.out.print(userName + "> ");
 					line = stdin.readLine();
+                                       // }else{ line = "!subscribe .*";}
 				} catch (IOException e) {
 					// Close ressources?
 					System.exit(-1);
@@ -101,7 +103,7 @@ public class ManagementClient {
 					BillingServerSecure bss;
 					try {
 						bss = billingServer.login(userName, userPwd);
-                        billingServerSecure = bss;
+                                                billingServerSecure = bss;
                         if(bss != null){
                             System.out.println(userName + " successfully logged in");
                         }
@@ -126,7 +128,7 @@ public class ManagementClient {
 
 				} else if (line.startsWith("!addStep") && split.length == 5) {
 					try {
-			        	startPrice 			= Double.parseDouble(split[1]);
+                                                 startPrice 			= Double.parseDouble(split[1]);
 						endPrice   			= Double.parseDouble(split[2]);
 						fixedPrice 			= Double.parseDouble(split[3]);
 						variablePrice 		= Double.parseDouble(split[4]);
