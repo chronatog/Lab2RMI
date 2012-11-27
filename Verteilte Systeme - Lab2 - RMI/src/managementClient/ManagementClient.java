@@ -100,7 +100,6 @@ public class ManagementClient {
 					System.exit(-1);
 				}
 				String[] split = line.split(" ");
-                                System.out.println("Split: " + split.length);
 
 				/*
 					Billing commands
@@ -198,7 +197,6 @@ public class ManagementClient {
 						System.out.println("EventListener Remote Exception");
 					}
 					regex = "";
-					System.out.println("im subcribe");
 					try {
 						regex = split[1];
 					} catch (IndexOutOfBoundsException e) {
