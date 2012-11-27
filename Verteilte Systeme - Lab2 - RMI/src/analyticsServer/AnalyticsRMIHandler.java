@@ -67,12 +67,6 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		// Mgmt clients call this to unsubscribe from events
 		for (int i = 0; i < subscriptionList.size(); i++) {
 			
-			//DEBUG
-			System.out.println("Asked to unsubscribe from subscription " + subscriptionId);
-			System.out.println("Current subscription ID to compare: " + subscriptionList.get(i).getId());
-			//
-			
-			
 			if (Integer.parseInt(subscriptionList.get(i).getId()) == subscriptionId) {
 				System.out.println("The subscriptions match!");
 				subscriptionList.remove(i);
@@ -96,9 +90,6 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			processUserEvent((UserEvent)event);
 		}
 
-		// DEBUG
-		System.out.println("Received event, event type " + event.getType() + "Class" + event.getClass());
-
 		List<EventInterface> offlineList = new ArrayList<EventInterface>();
 		List<EventInterface> notificationListEvent = new ArrayList<EventInterface>(); 
 		Iterator<Subscription> iterator = subscriptionList.iterator();
@@ -112,6 +103,10 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			EventInterface eventListener = subscription.getEventListener();
 
 			if (matcher.find()) {
+				
+				// DEBUG
+					System.out.println("Matcher worked.");
+				//
 				if (!notificationListEvent.isEmpty()) {
 					if (!notificationListEvent.contains(eventListener)) {
 						notificationListEvent.add(eventListener);
@@ -123,10 +118,18 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		}
 
 		Iterator<EventInterface> it = notificationListEvent.iterator();
+		
+		// DEBUG
+			System.out.println();
+		//
 		while (it.hasNext()) {
 			EventInterface eventListener = null;
 			try {
 				eventListener = it.next();
+				
+				//DEBUG
+					System.out.println("Found EventListener to send event " + event.getClass() + " : " + event.getType() + " to");
+				//
 
 				eventListener.processEvent(event);
 			} catch (RemoteException e) {
