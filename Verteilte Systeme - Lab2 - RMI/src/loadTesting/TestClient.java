@@ -41,6 +41,7 @@ public class TestClient extends Thread{
     private boolean createAuction = false;
     private long startTime;
     private int ID = 1;
+    private static TestRead testRead;
 
 
     TestClient(String host, int port,long time, int client,int clientAll,  int auctionPerMin, int auctionDuration, int updateIntervalSec,
@@ -66,15 +67,19 @@ public class TestClient extends Thread{
             out = new PrintWriter(socket.getOutputStream(), true); //damit werden Daten an den Server uebergeben
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));//Daten vom Server koennen damit gelesen werden
 
+            testRead = new TestRead(in);
+            testRead.start();
         } catch (UnknownHostException ex) {
             Logger.getLogger(TestClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(TestClient.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        
+        
         login();
 
-     
+        
 
       // scheduling the task creat at fixed rate
       //  1min = 60 s = 60000 ms
@@ -107,8 +112,6 @@ public class TestClient extends Thread{
               }
       ,new Date(),1000);*/
 
-
-
       // scheduling the task bid at fixed rate
       //  1min = 60 s = 60000 ms
       if(createAuction == true){
@@ -121,11 +124,7 @@ public class TestClient extends Thread{
                     }
               }
             ,new Date(),60000/bidsPerMin);
-
       }
-
-
-
    }
 
     
@@ -169,7 +168,7 @@ public class TestClient extends Thread{
         //System.out.println("Auctions: "  + auctions);
         //System.out.println("ID: " + ID);
         String bid = "!bid " +id+" "+price;
-        System.out.println(bid);
+        //System.out.println(bid);
         ID++; 
         out.println(bid);
     }
@@ -179,7 +178,6 @@ public class TestClient extends Thread{
         //System.out.println("in der liste");
         out.println(list);
                // read();
-
         
     }
 

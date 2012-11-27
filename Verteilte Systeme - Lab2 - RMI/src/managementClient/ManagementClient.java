@@ -33,11 +33,17 @@ public class ManagementClient {
 	static BillingServerSecure billingServerSecure = null;
 	static AnalyticsRMIInterface analyticsHandler = null;
 	static String userName = "";
+        static String loadTest = "";
+        static String line = "";
+        static boolean test = false;
 	public static void main(String[] args) {
-		if (args.length == 2) {
-			String analBind = args[0];;
+		if (args.length == 2 || args.length == 3) {
+			String analBind = args[0];
 			String billBind = args[1];
-			String line = "";
+                        if(args.length == 3){
+                            loadTest = args[2];
+                            test = true;
+                        }
 			
 			String userPwd = "";
 			double startPrice = 0.0;
@@ -49,7 +55,7 @@ public class ManagementClient {
 			int subscriptionId = 0;
 			Registry registry = null;
 			EventInterface eventListener = null;
-			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+                        BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 
 			readProperties();
 
@@ -84,8 +90,11 @@ public class ManagementClient {
 			
 			while (true) {
 				try {
-					System.out.print(userName + "> ");
-					line = stdin.readLine();
+                                    System.out.print(userName + "> ");
+                                    if(test == true){
+                                          line = loadTest;
+					
+                                     } else  line = stdin.readLine();                                                                              
 				} catch (IOException e) {
 					// Close ressources?
 					System.exit(-1);
@@ -101,7 +110,7 @@ public class ManagementClient {
 					BillingServerSecure bss;
 					try {
 						bss = billingServer.login(userName, userPwd);
-                        billingServerSecure = bss;
+                                                billingServerSecure = bss;
                         if(bss != null){
                             System.out.println(userName + " successfully logged in");
                         }
@@ -126,7 +135,7 @@ public class ManagementClient {
 
 				} else if (line.startsWith("!addStep") && split.length == 5) {
 					try {
-			        	startPrice 			= Double.parseDouble(split[1]);
+                                                 startPrice 			= Double.parseDouble(split[1]);
 						endPrice   			= Double.parseDouble(split[2]);
 						fixedPrice 			= Double.parseDouble(split[3]);
 						variablePrice 		= Double.parseDouble(split[4]);
@@ -188,7 +197,6 @@ public class ManagementClient {
 						System.out.println("EventListener Remote Exception");
 					}
 					regex = "";
-					
 					try {
 						regex = split[1];
 					} catch (IndexOutOfBoundsException e) {

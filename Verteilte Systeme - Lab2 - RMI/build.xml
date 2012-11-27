@@ -103,6 +103,7 @@
             <arg value="${server.host}"/>
             <arg value="${server.port}"/>
             <arg value="${analytics.bindingName}"/>
+            <arg value="${billing.bindingName}"/>
         </java>
     </target>
 
