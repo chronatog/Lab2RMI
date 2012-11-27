@@ -33,18 +33,18 @@ public class ManagementClient {
 	static BillingServerSecure billingServerSecure = null;
 	static AnalyticsRMIInterface analyticsHandler = null;
 	static String userName = "";
-        static String loadTest = "";
-        static String line = "";
-        static boolean test = false;
+	static String loadTest = "";
+	static String line = "";
+	static boolean test = false;
 	public static void main(String[] args) {
 		if (args.length == 2 || args.length == 3) {
 			String analBind = args[0];
 			String billBind = args[1];
-                        if(args.length == 3){
-                            loadTest = args[2];
-                            test = true;
-                        }
-			
+			if(args.length == 3){
+				loadTest = args[2];
+				test = true;
+			}
+
 			String userPwd = "";
 			double startPrice = 0.0;
 			double endPrice = 0.0;
@@ -55,7 +55,7 @@ public class ManagementClient {
 			int subscriptionId = 0;
 			Registry registry = null;
 			EventInterface eventListener = null;
-                        BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 
 			readProperties();
 
@@ -87,14 +87,14 @@ public class ManagementClient {
 			} catch (RemoteException e1) {
 				System.out.println("Problem finding AnalyticsServer remote object.");
 			} 
-			
+
 			while (true) {
 				try {
-                                    System.out.print(userName + "> ");
-                                    if(test == true){
-                                          line = loadTest;
-					
-                                     } else  line = stdin.readLine();                                                                              
+					System.out.print(userName + "> ");
+					if(test == true){
+						line = loadTest;
+
+					} else  line = stdin.readLine();                                                                              
 				} catch (IOException e) {
 					// Close ressources?
 					System.exit(-1);
@@ -103,93 +103,93 @@ public class ManagementClient {
 
 				/*
 					Billing commands
-				*/
+				 */
 				if (line.startsWith("!login ") && split.length == 3) {
 					userName = split[1];
 					userPwd = split[2];
 					BillingServerSecure bss;
 					try {
 						bss = billingServer.login(userName, userPwd);
-                                                billingServerSecure = bss;
-                        if(bss != null){
-                            System.out.println(userName + " successfully logged in");
-                        }
-                    } catch (RemoteException e) {
-                        System.out.println("Login failed");
-                    } catch (NullPointerException e) {
-                    	System.out.println("Wrong login credentials");
-                    }
-				
+						billingServerSecure = bss;
+						if(bss != null){
+							System.out.println(userName + " successfully logged in");
+						}
+					} catch (RemoteException e) {
+						System.out.println("Login failed");
+					} catch (NullPointerException e) {
+						System.out.println("Wrong login credentials");
+					}
+
 				} else if (line.equals("!steps") && split.length == 1) {
 					String steps;
 					try {
 						if (billingServerSecure != null) {
-	                        steps = billingServerSecure.getPriceSteps().toString();
-	                        System.out.println(steps);
+							steps = billingServerSecure.getPriceSteps().toString();
+							System.out.println(steps);
 						} else {
 							System.out.println("Error: you must be logged in for this command to work");
 						}
 					} catch (RemoteException ex) {
-                        System.out.println("There are no price steps");
-                    }
+						System.out.println("There are no price steps");
+					}
 
 				} else if (line.startsWith("!addStep") && split.length == 5) {
 					try {
-                                                 startPrice 			= Double.parseDouble(split[1]);
+						startPrice 			= Double.parseDouble(split[1]);
 						endPrice   			= Double.parseDouble(split[2]);
 						fixedPrice 			= Double.parseDouble(split[3]);
 						variablePrice 		= Double.parseDouble(split[4]);
-			            // Add step to BillingServer
-			            billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
-			        } catch (RemoteException ex) {
-			            System.out.println(ex);
-			        } catch (NumberFormatException e) {
-			        	System.out.println("Error: Please enter valid numbers");
-			        }
-					
-				} else if (line.startsWith("!removeStep") && split.length == 3) {
-			        try {
-			            // Call RemoveStep from Billing Server
-                                    startPrice = Double.parseDouble(split[1]);
-			            endPrice = Double.parseDouble(split[2]);
-			            billingServerSecure.deletePriceStep(startPrice, endPrice);
-			        } catch (RemoteException ex) {
-			            System.out.println(ex);
-			        } catch (NumberFormatException e) {
-			        	System.out.println("Error: Please enter valid numbers");
-			        }
+						// Add step to BillingServer
+						billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
+					} catch (RemoteException ex) {
+						System.out.println(ex);
+					} catch (NumberFormatException e) {
+						System.out.println("Error: Please enter valid numbers");
+					}
 
-				
+				} else if (line.startsWith("!removeStep") && split.length == 3) {
+					try {
+						// Call RemoveStep from Billing Server
+						startPrice = Double.parseDouble(split[1]);
+						endPrice = Double.parseDouble(split[2]);
+						billingServerSecure.deletePriceStep(startPrice, endPrice);
+					} catch (RemoteException ex) {
+						System.out.println(ex);
+					} catch (NumberFormatException e) {
+						System.out.println("Error: Please enter valid numbers");
+					}
+
+
 				} else if (line.startsWith("!bill") && split.length == 2) {
 					userBill = split[1];
 					String bill;
-                    try {
-                        bill = billingServerSecure.getBill(userBill).toString();
-                        System.out.println(bill);
+					try {
+						bill = billingServerSecure.getBill(userBill).toString();
+						System.out.println(bill);
 
-                    } catch (RemoteException ex) {
-                        System.out.println("BillingSeverSecure Remote Exception");
-                    }
+					} catch (RemoteException ex) {
+						System.out.println("BillingSeverSecure Remote Exception");
+					}
 				} else if (line.equals("!logout") && split.length == 1) {
 					if (userName.equals("")) {
 						System.out.println("Error: You are not logged in");
 					} else {
 						logout();
 					}
-				
-				/*
+
+					/*
 					Analytics commands
-				*/
+					 */
 				} else if (line.equals("!auto") && split.length == 1) {
 					EventListener.setMode(0);
-					
+
 				} else if (line.equals("!hide") && split.length == 1) {
 					EventListener.setMode(1);
-					
+
 					System.out.println("Starting buffering of notifications..");
 				} else if (line.equals("!print") && split.length == 1) {
 					EventListener.printBuffer();
-					
+
 				} else if (line.startsWith("!subscribe") && split.length == 2) {
 					try {
 						eventListener = new EventListener();
@@ -198,11 +198,11 @@ public class ManagementClient {
 					}
 					regex = "";
 					try {
-						regex = split[1];
+						regex = split[1].replaceAll("\'", "");
 					} catch (IndexOutOfBoundsException e) {
 						System.out.println("Error: Wrong argument count.");
 					}
-					
+
 					try {
 						String answer;
 						if (analyticsHandler == null) {

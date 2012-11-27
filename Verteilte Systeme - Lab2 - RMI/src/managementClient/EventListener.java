@@ -26,7 +26,7 @@ public class EventListener extends UnicastRemoteObject implements EventInterface
 	
 	public void processEvent(Event event) throws RemoteException {
 		
-		System.out.println("Incoming event received: " + event.getType() + " " + event.getClass());
+		//System.out.println("Incoming event received: " + event.getType() + " " + event.getClass());
 		
 		Timestamp myTimestamp = new Timestamp(event.getTimestamp());
 		String timestamp = new SimpleDateFormat("dd.MM.yyyy - hh:mm:ss z").format(myTimestamp);
