@@ -26,6 +26,7 @@ public class AnalyticsServer {
 	static BufferedReader stdin = null;
 	static AnalyticsRMIHandler rmiHandler = null;
 	public static void main(String[] args) {
+		
 		if (args.length == 1) {
 			analBind = args[0];
 			

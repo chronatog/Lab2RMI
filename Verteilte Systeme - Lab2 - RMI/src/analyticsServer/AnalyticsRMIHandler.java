@@ -21,7 +21,7 @@ import event.UserEvent;
 
 public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 
-	Pattern pattern;
+	String pattern = "";
 
 	List<Subscription> subscriptionList = Collections.synchronizedList(new ArrayList<Subscription>());
 	List<UserEvent> userList = Collections.synchronizedList(new ArrayList<UserEvent>());
@@ -51,11 +51,8 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 
 	public String subscribe(EventInterface eventListener, String regex) throws RemoteException {
 		// Mgmt clients call this to subscribe to events
-		try {
-			pattern = Pattern.compile(regex);
-		} catch (PatternSyntaxException e) {
-			return "Error matching regex";
-		}
+
+		pattern = regex;
 
 		Subscription subscription = new Subscription(pattern, eventListener);
 		subscriptionList.add(subscription);
@@ -67,7 +64,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		// Mgmt clients call this to unsubscribe from events
 		for (int i = 0; i < subscriptionList.size(); i++) {
 
-			if (Integer.parseInt(subscriptionList.get(i).getId()) == subscriptionId) {
+			if (subscriptionList.get(i).getId() == subscriptionId) {
 				//System.out.println("The subscriptions match!");
 				subscriptionList.remove(i);
 				return "subscription " + subscriptionId + " terminated";
@@ -87,7 +84,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		while (iterator.hasNext()) {
 			Subscription subscription = iterator.next();
 			pattern = subscription.getRegex();
-			
+
 			//DEBUG
 			//System.out.println("Subscription found: " + subscription.getId() + " with Regex: " + subscription.getRegex().toString());
 			//
@@ -100,7 +97,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			//System.out.println(event.getType().matches(pattern.toString()));
 			//if (matcher.find()) {
 			if (event.getType().matches(subscription.getRegex().toString())) {
-				
+
 				// DEBUG
 				//System.out.println("Matching worked.");
 				//
@@ -126,7 +123,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 				//DEBUG
 				//System.out.println("Found EventListener to notify about " + event.getClass() + " : " + event.getType());
 				//
-				
+
 			} catch (RemoteException e) {
 				offlineList.add(eventListener);
 			}
@@ -325,14 +322,9 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 			Subscription subscription = iterator.next();
 
 			pattern = subscription.getRegex();
-			Matcher matcher = pattern.matcher(event.getType());
-
 			EventInterface eventListener = subscription.getEventListener();
 
-			if (matcher.find()) {
-
-				//System.out.println("Subscription could be matched!");
-
+			if (event.getType().matches(pattern)) {
 				if (!notificationListForThisEvent.isEmpty()) {
 					if (!notificationListForThisEvent.contains(eventListener)) {
 						notificationListForThisEvent.add(eventListener);

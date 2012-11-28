@@ -6,20 +6,20 @@ import event.EventInterface;
 
 public class Subscription {
 	private static int idCount = 0;
-	private final String id = Subscription.createId();
-	private Pattern regex;
+	private final int id = Subscription.createId();
+	private String regex;
 	private EventInterface eventListener;
 
-	public Subscription(Pattern regex, EventInterface eventListener) {
+	public Subscription(String regex, EventInterface eventListener) {
 		this.regex = regex;
 		this.eventListener = eventListener;
 	}
 
-	public Pattern getRegex() {
+	public String getRegex() {
 		return regex;
 	}
 
-	public synchronized void setRegex(Pattern regex) {
+	public synchronized void setRegex(String regex) {
 		this.regex = regex;
 	}
 
@@ -31,11 +31,11 @@ public class Subscription {
 		this.eventListener = eventListener;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	private static synchronized String createId() {
-		return Integer.toString(idCount+=1);
+	private static synchronized int createId() {
+		return idCount+=1;
 	}
 }
