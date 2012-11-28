@@ -215,7 +215,6 @@ class MyTask extends TimerTask {
 		}
 
 		// Create AUCTION_ENDED event
-		if (highestBid != 0.0) {		// Someone made an offer aka there is a winner
 			Timestamp logoutTimestamp = new Timestamp(System.currentTimeMillis());
 			long ts = logoutTimestamp.getTime();
 			try {
@@ -226,30 +225,6 @@ class MyTask extends TimerTask {
 				System.out.println("Error processing event" + e.getClass());
 			}
 
-		}
-
-		/* Should be removed, since this is only logic for notifying auction winner and owner
-
-    		String winString = "!auction-ended " + highestBidder + " " + highestBid.toString() + " " + AuctionServer.auctionDescription.get(id);
-	    	//notify winner and owner of finished auction if they are online, otherwise queue notifications
-
-    		if (AuctionServer.userHostnames.containsKey(highestBidder)) {		
-	    		AuctionProtocol.notifyClient(winString, highestBidder);
-	    	} else {
-
-
-	    	}
-	    	if (AuctionServer.userHostnames.containsKey(auctionOwner)) {
-	    		AuctionProtocol.notifyClient(winString, AuctionServer.auctionOwner.get(id));
-	    	} else {
-	    		if (AuctionServer.userMissed.get(auctionOwner).equals("")) {		// If notify - string is empty
-	    			AuctionServer.userMissed.put(auctionOwner, winString);			// Put winString
-	    		} else {		// If notify - String non-empty
-	    			AuctionServer.userMissed.put(auctionOwner, AuctionServer.userMissed.get(auctionOwner) + ";" + winString);
-	    		}
-	    	}
-
-		 */
 		//remove auction from system
 		AuctionServer.auctionDescription.remove(id);
 		AuctionServer.auctionEndtime.remove(id);
