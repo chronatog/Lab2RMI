@@ -185,9 +185,9 @@ public class ManagementClient {
 					} catch (NumberFormatException e) {
 						System.out.println("Error: " + e.getMessage());
 					} catch (IllegalArgumentException ae){
-                                                System.out.println("Error: " + ae.getMessage());
+						System.out.println("Error: " + ae.getMessage());
 
-                                        }
+					}
 
 				} else if (line.startsWith("!removeStep") && split.length == 3) {
 					try {
@@ -202,9 +202,9 @@ public class ManagementClient {
 					} catch (NumberFormatException e) {
 						System.out.println("Error: Please enter valid numbers");
 					} catch (IllegalArgumentException ae){
-                                                System.out.println("Error: " + ae.getMessage());
+						System.out.println("Error: " + ae.getMessage());
 
-                                        }
+					}
 
 
 				} else if (line.startsWith("!bill") && split.length == 2) {
