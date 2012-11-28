@@ -30,7 +30,7 @@ public class PriceSteps implements Serializable{
         }
 
         if(startPrice>endPrice){
-                        throw new RemoteException("The min price is higher than the max price");
+                        throw new IllegalArgumentException("The min price is higher than the max price");
 
         } else{
 
