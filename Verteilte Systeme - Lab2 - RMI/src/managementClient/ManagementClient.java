@@ -40,7 +40,7 @@ public class ManagementClient {
 		if (args.length == 2 || args.length == 3) {
 			String analBind = args[0];
 			String billBind = args[1];
-                        String userPwd = "";
+			String userPwd = "";
 			double startPrice = 0.0;
 			double endPrice = 0.0;
 			double fixedPrice = 0.0;
@@ -51,7 +51,7 @@ public class ManagementClient {
 			Registry registry = null;
 			EventInterface eventListener = null;
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-			
+
 
 
 			readProperties();
@@ -85,48 +85,48 @@ public class ManagementClient {
 				System.out.println("Problem finding AnalyticsServer remote object.");
 			}
 
-                        /*
-                         * LOADTEST
-                         */
-                        if(args.length == 3){
+			/*
+			 * LOADTEST
+			 */
+			if(args.length == 3){
 
 				line = args[2];
-                                String[] split = line.split(" ");
-                                try {
-						 eventListener = new EventListener();
-					} catch (RemoteException e) {
-						System.out.println("EventListener Remote Exception");
-					}
-					 regex = "";
-					try {
+				String[] split = line.split(" ");
+				try {
+					eventListener = new EventListener();
+				} catch (RemoteException e) {
+					System.out.println("EventListener Remote Exception");
+				}
+				regex = "";
+				try {
 
-						regex = split[1].replaceAll("\'", "");
-					} catch (IndexOutOfBoundsException e) {
-						System.out.println("Error: Wrong argument count.");
-					}
+					regex = split[1].replaceAll("\'", "");
+				} catch (IndexOutOfBoundsException e) {
+					System.out.println("Error: Wrong argument count.");
+				}
 
-					try {
-						String answer;
-						if (analyticsHandler == null) {
-							try {
-								analyticsHandler = (AnalyticsRMIInterface)  registry.lookup(analBind);
-							} catch (NotBoundException e) {
-								System.out.println("Error: Problem binding analytics Server");
-							}
+				try {
+					String answer;
+					if (analyticsHandler == null) {
+						try {
+							analyticsHandler = (AnalyticsRMIInterface)  registry.lookup(analBind);
+						} catch (NotBoundException e) {
+							System.out.println("Error: Problem binding analytics Server");
 						}
-						answer = analyticsHandler.subscribe(eventListener, regex);
-
-						System.out.println(answer);
-					} catch (RemoteException e) {
-						System.out.println("Analytic Server Remote Exception");
 					}
+					answer = analyticsHandler.subscribe(eventListener, regex);
+
+					System.out.println(answer);
+				} catch (RemoteException e) {
+					System.out.println("Analytic Server Remote Exception");
+				}
 			}
 
 			while (true) {
 				try {
 					System.out.print(userName + "> ");
-					
-                                        line = stdin.readLine();
+
+					line = stdin.readLine();
 				} catch (IOException e) {
 					// Close ressources?
 					System.exit(-1);
@@ -173,13 +173,13 @@ public class ManagementClient {
 						variablePrice 		= Double.parseDouble(split[4]);
 						// Add step to BillingServer
 
-                                                billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
-					
-                                                if(endPrice == 0){
-                                                        System.out.println("Step ["+startPrice+" INFINITY]" + " successfully added");
-                                                   } else {
-                                                        System.out.println("Step ["+startPrice+" "+endPrice +"]" + " successfully added");
-                                                    }
+						billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
+
+						if(endPrice == 0){
+							System.out.println("Step ["+startPrice+" INFINITY]" + " successfully added");
+						} else {
+							System.out.println("Step ["+startPrice+" "+endPrice +"]" + " successfully added");
+						}
 					} catch (RemoteException ex) {
 						System.out.println("Fehler: " + ex.getLocalizedMessage());
 					} catch (NumberFormatException e) {
@@ -192,7 +192,7 @@ public class ManagementClient {
 						startPrice = Double.parseDouble(split[1]);
 						endPrice = Double.parseDouble(split[2]);
 						billingServerSecure.deletePriceStep(startPrice, endPrice);
-                                                System.out.print("Price step ["+startPrice+ " "+  endPrice + "]" + " successfully removed");
+						System.out.print("Price step ["+startPrice+ " "+  endPrice + "]" + " successfully removed");
 
 					} catch (RemoteException ex) {
 						System.out.println(ex);
