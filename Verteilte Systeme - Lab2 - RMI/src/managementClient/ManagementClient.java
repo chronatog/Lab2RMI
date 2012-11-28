@@ -181,7 +181,7 @@ public class ManagementClient {
 							System.out.println("Step ["+startPrice+" "+endPrice +"]" + " successfully added");
 						}
 					} catch (RemoteException ex) {
-						System.out.println("Fehler: " + ex.getLocalizedMessage());
+						System.out.println("Error: " + ex.getMessage());
 					} catch (NumberFormatException e) {
 						System.out.println("Error: Please enter valid numbers");
 					}
