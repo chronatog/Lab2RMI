@@ -172,15 +172,16 @@ public class ManagementClient {
 						fixedPrice 			= Double.parseDouble(split[3]);
 						variablePrice 		= Double.parseDouble(split[4]);
 						// Add step to BillingServer
-						billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
-						 if(endPrice == 0){
-                             System.out.println("Step ["+startPrice+" INFINITY]" + " successfully added");
-                     } else 
-                     { 
-                    	 System.out.println("Step ["+startPrice+" "+endPrice +"]" + " successfully added");
-                    	 }
+
+                                                billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
+					
+                                                if(endPrice == 0){
+                                                        System.out.println("Step ["+startPrice+" INFINITY]" + " successfully added");
+                                                   } else {
+                                                        System.out.println("Step ["+startPrice+" "+endPrice +"]" + " successfully added");
+                                                    }
 					} catch (RemoteException ex) {
-						System.out.println(ex.getMessage());
+						System.out.println("Fehler: " + ex.getLocalizedMessage());
 					} catch (NumberFormatException e) {
 						System.out.println("Error: Please enter valid numbers");
 					}
