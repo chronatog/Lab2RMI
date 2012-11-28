@@ -20,7 +20,6 @@ public class TestMC extends Thread{
     }
 
     public void run() {
-
         ManagementClient.main(args);
 
     }

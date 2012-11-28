@@ -44,7 +44,7 @@ public class AuctionProtocol {
 				while (iter.hasNext()) {
 					Map.Entry entry = (Map.Entry) iter.next();
 					completeString = completeString + entry.getKey() + ". '" + entry.getValue() + "' " + AuctionServer.auctionOwner.get(entry.getKey()) + " " + AuctionServer.auctionEndtime.get(entry.getKey()) + " " + AuctionServer.auctionHighestBid.get(entry.getKey()).toString() + " " + AuctionServer.auctionHighestBidder.get(entry.getKey()) + "\n";
-				}
+                                }
 			}
 
 			return completeString;	

@@ -40,12 +40,7 @@ public class ManagementClient {
 		if (args.length == 2 || args.length == 3) {
 			String analBind = args[0];
 			String billBind = args[1];
-			if(args.length == 3){
-				loadTest = args[2];
-				test = true;
-			}
-
-			String userPwd = "";
+                        String userPwd = "";
 			double startPrice = 0.0;
 			double endPrice = 0.0;
 			double fixedPrice = 0.0;
@@ -56,6 +51,8 @@ public class ManagementClient {
 			Registry registry = null;
 			EventInterface eventListener = null;
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+			
+
 
 			readProperties();
 
@@ -86,15 +83,50 @@ public class ManagementClient {
 				System.out.println("Analytic Server not found.");
 			} catch (RemoteException e1) {
 				System.out.println("Problem finding AnalyticsServer remote object.");
-			} 
+			}
+
+                        /*
+                         * LOADTEST
+                         */
+                        if(args.length == 3){
+
+				line = args[2];
+                                String[] split = line.split(" ");
+                                try {
+						 eventListener = new EventListener();
+					} catch (RemoteException e) {
+						System.out.println("EventListener Remote Exception");
+					}
+					 regex = "";
+					try {
+
+						regex = split[1].replaceAll("\'", "");
+					} catch (IndexOutOfBoundsException e) {
+						System.out.println("Error: Wrong argument count.");
+					}
+
+					try {
+						String answer;
+						if (analyticsHandler == null) {
+							try {
+								analyticsHandler = (AnalyticsRMIInterface)  registry.lookup(analBind);
+							} catch (NotBoundException e) {
+								System.out.println("Error: Problem binding analytics Server");
+							}
+						}
+						answer = analyticsHandler.subscribe(eventListener, regex);
+
+						System.out.println(answer);
+					} catch (RemoteException e) {
+						System.out.println("Analytic Server Remote Exception");
+					}
+			}
 
 			while (true) {
 				try {
 					System.out.print(userName + "> ");
-					if(test == true){
-						line = loadTest;
-
-					} else  line = stdin.readLine();                                                                              
+					
+                                        line = stdin.readLine();
 				} catch (IOException e) {
 					// Close ressources?
 					System.exit(-1);
@@ -236,7 +268,7 @@ public class ManagementClient {
 				} else {
 					System.out.println("Command not recognized.");
 				}
-			}
+			}//
 		} else {
 			System.out.println("Wrong argument count.");
 		}

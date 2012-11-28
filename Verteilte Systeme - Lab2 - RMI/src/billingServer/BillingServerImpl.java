@@ -34,9 +34,10 @@ public class BillingServerImpl implements BillingServer{
             bindingName = args[0];
             readProperties();
             BillingServer billingserver;
+            BillingServer billingStub;
             try {
                 billingserver = new BillingServerImpl();
-                BillingServer billingStub = (BillingServer) UnicastRemoteObject.exportObject(billingserver, 0);
+                billingStub = (BillingServer) UnicastRemoteObject.exportObject(billingserver, 0);
                 Registry registry = LocateRegistry.getRegistry(registryPort);
                 try{
                     registry.list();
@@ -53,7 +54,7 @@ public class BillingServerImpl implements BillingServer{
 
                 System.out.println("down...");
                 try {
-                    registry.unbind(bindingName);
+                    registry.unbind(bindingName, billingStub);
                     UnicastRemoteObject.unexportObject(billingserver, true);
                     UnicastRemoteObject.unexportObject(registry, true);
 

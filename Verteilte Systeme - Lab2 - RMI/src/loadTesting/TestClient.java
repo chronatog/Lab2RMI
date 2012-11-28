@@ -70,9 +70,9 @@ public class TestClient extends Thread{
             testRead = new TestRead(in);
             testRead.start();
         } catch (UnknownHostException ex) {
-            Logger.getLogger(TestClient.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: UnknownHostException");
         } catch (IOException ex) {
-            Logger.getLogger(TestClient.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: IOException");
         }
 
         
