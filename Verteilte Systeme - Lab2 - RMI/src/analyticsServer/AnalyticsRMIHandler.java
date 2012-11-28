@@ -260,7 +260,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 				}
 			} else {
 				// current session time is bigger than the max -> new max
-				if (maxSessionTime.getValue() > difference) {
+				if (maxSessionTime.getValue() < difference) {	
 					try {
 						maxSessionTime= new StatisticsEvent("USER_SESSIONTIME_MAX", timestamp, difference);
 						notifyManagementClients(maxSessionTime);
