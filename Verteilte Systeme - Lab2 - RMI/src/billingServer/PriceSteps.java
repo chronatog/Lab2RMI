@@ -36,6 +36,9 @@ public class PriceSteps implements Serializable{
                 if(newPS.collide(helpPS)== true){
                     throw new RemoteException("The price interval collides with an existing price step");
                 }
+                if(newPS.maxMin(helpPS) == true){
+                    throw new RemoteException("The min price is higher than the max price");
+                }
             }
             this.priceSteps.add(newPS);
         }
@@ -152,6 +155,12 @@ public class PriceSteps implements Serializable{
             if(this.maxPrice == 0 && step.maxPrice == 0) return true;
             else
                 return false;
+        }
+
+        public boolean maxMin(PriceStep step){
+            if((this.minPrice >= this.maxPrice)== true){
+                return false;
+            }return true; 
         }
         
        
