@@ -28,11 +28,13 @@ public class PriceSteps implements Serializable{
         if(startPrice<0 || endPrice<0 || fixedPrice<0 || variablePricePercent<0){
             throw new RemoteException("Negative values are not allowed");
         }
+        if(endPrice != 0)
+        {
+            if(startPrice>endPrice){
+                throw new IllegalArgumentException("The min price is higher than the max price");
 
-        if(startPrice>endPrice){
-                        throw new IllegalArgumentException("The min price is higher than the max price");
-
-        } else{
+            }
+            }
 
             PriceStep newPS = new PriceStep(startPrice, endPrice,fixedPrice,variablePricePercent);
             
@@ -40,14 +42,11 @@ public class PriceSteps implements Serializable{
                 for (PriceStep helpPS : priceSteps){
                     if(newPS.collide(helpPS)== true){
                         throw new NumberFormatException("The price interval collides with an existing price step");
-                    }
-
-
+                    }                    
                 }
              this.priceSteps.add(newPS);
 
-            }
-         }
+            }               
 
     }
 
@@ -148,20 +147,26 @@ public class PriceSteps implements Serializable{
 
         public boolean collide(PriceStep step){
 
-            if((this.maxPrice != 0 && step.maxPrice!= 0)==true){
+            if((this.maxPrice != 0 && step.maxPrice!= 0)){
                 if(this.minPrice>=step.maxPrice){
                     return false;
                 }
                 if(this.maxPrice<=step.minPrice){
                     return false;
                 }
+                
                 return true;
             }
+            if(step.maxPrice == 0){
+                    return true;
+                }
 
             if(this.maxPrice == 0 && step.maxPrice == 0) return true;
             else
                 return false;
         }
+
+
 
         public boolean maxMin(PriceStep step){
             if(this.minPrice > this.maxPrice){
