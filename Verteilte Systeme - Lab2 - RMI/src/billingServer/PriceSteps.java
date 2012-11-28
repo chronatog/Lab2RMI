@@ -39,7 +39,7 @@ public class PriceSteps implements Serializable{
             synchronized(priceSteps){
                 for (PriceStep helpPS : priceSteps){
                     if(newPS.collide(helpPS)== true){
-                        throw new RemoteException("The price interval collides with an existing price step");
+                        throw new NumberFormatException("The price interval collides with an existing price step");
                     }
 
 
@@ -63,7 +63,7 @@ public class PriceSteps implements Serializable{
             }
         }
         if(deleteStep == false){
-            throw new RemoteException("The price step does not exist");
+            throw new IllegalArgumentException("The price step does not exist");
         }
     }
 

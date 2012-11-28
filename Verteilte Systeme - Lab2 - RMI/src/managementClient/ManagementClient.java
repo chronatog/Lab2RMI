@@ -183,8 +183,11 @@ public class ManagementClient {
 					} catch (RemoteException ex) {
 						System.out.println("Error: " + ex.getMessage());
 					} catch (NumberFormatException e) {
-						System.out.println("Error: Please enter valid numbers");
-					}
+						System.out.println("Error: " + e.getMessage());
+					} catch (IllegalArgumentException ae){
+                                                System.out.println("Error: " + ae.getMessage());
+
+                                        }
 
 				} else if (line.startsWith("!removeStep") && split.length == 3) {
 					try {
@@ -192,13 +195,16 @@ public class ManagementClient {
 						startPrice = Double.parseDouble(split[1]);
 						endPrice = Double.parseDouble(split[2]);
 						billingServerSecure.deletePriceStep(startPrice, endPrice);
-						System.out.print("Price step ["+startPrice+ " "+  endPrice + "]" + " successfully removed");
+						System.out.println("Price step ["+startPrice+ " "+  endPrice + "]" + " successfully removed");
 
 					} catch (RemoteException ex) {
 						System.out.println(ex);
 					} catch (NumberFormatException e) {
 						System.out.println("Error: Please enter valid numbers");
-					}
+					} catch (IllegalArgumentException ae){
+                                                System.out.println("Error: " + ae.getMessage());
+
+                                        }
 
 
 				} else if (line.startsWith("!bill") && split.length == 2) {
@@ -209,7 +215,7 @@ public class ManagementClient {
 						System.out.println(bill);
 
 					} catch (RemoteException ex) {
-						System.out.println("BillingSeverSecure Remote Exception");
+						System.out.println(" Error: There are no bill");
 					}
 				} else if (line.equals("!logout") && split.length == 1) {
 					if (userName.equals("")) {
