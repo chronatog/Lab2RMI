@@ -157,7 +157,7 @@ public class PriceSteps implements Serializable{
                 
                 return true;
             }
-            if(step.maxPrice == 0){
+            if(step.maxPrice == 0 && step.minPrice<= this.maxPrice){
                     return true;
                 }
 
