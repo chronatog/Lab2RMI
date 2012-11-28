@@ -86,6 +86,11 @@ public class BiddingClient {
 						out.println(line);
 						userName = "";
 					} else if (line.equals("!list")) {
+						try {
+						    Thread.sleep(200);
+						} catch(InterruptedException ex) {
+						    Thread.currentThread().interrupt();
+						}
 						out.println(line);
 					} else if ((line.startsWith("!create ")) && (split.length >= 3)) {
 						try {
