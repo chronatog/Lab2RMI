@@ -54,7 +54,6 @@ public class BiddingClient {
 				try {
 					clientSocket = new Socket(args[0], Integer.parseInt(args[1]));
 					out = new PrintWriter(clientSocket.getOutputStream(), true);
-
 					new ClientTcpThread(clientSocket).start();
 
 				} catch (UnknownHostException e) {
@@ -86,12 +85,8 @@ public class BiddingClient {
 						out.println(line);
 						userName = "";
 					} else if (line.equals("!list")) {
-						try {
-						    Thread.sleep(200);
-						} catch(InterruptedException ex) {
-						    Thread.currentThread().interrupt();
-						}
 						out.println(line);
+						
 					} else if ((line.startsWith("!create ")) && (split.length >= 3)) {
 						try {
 							if ((Integer.parseInt(split[1]) > 0) && (Integer.parseInt(split[1]) < 1000000)) {
