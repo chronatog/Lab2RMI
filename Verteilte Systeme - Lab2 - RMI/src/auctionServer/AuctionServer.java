@@ -21,10 +21,6 @@ public class AuctionServer {
 	public static Map<String, String> userHostnames = Collections.synchronizedMap(new HashMap<String, String>());
 	public static Map<String, String> userMissed = Collections.synchronizedMap(new HashMap<String, String>());
 
-	/* Should not be needed anymore
-	public static Map<String, Integer> userPorts = Collections.synchronizedMap(new HashMap<String, Integer>());
-	 */
-
 	public static Map<Integer, String> auctionDescription = Collections.synchronizedMap(new HashMap<Integer, String>());
 	public static Map<Integer, Timestamp> auctionEndtime = Collections.synchronizedMap(new HashMap<Integer, Timestamp>());
 	public static Map<Integer, Double> auctionHighestBid = Collections.synchronizedMap(new HashMap<Integer, Double>());

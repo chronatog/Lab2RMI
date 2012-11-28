@@ -174,7 +174,7 @@ public class ManagementClient {
 						// Add step to BillingServer
 						billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
 					} catch (RemoteException ex) {
-						System.out.println(ex);
+						System.out.println(ex.getMessage());
 					} catch (NumberFormatException e) {
 						System.out.println("Error: Please enter valid numbers");
 					}

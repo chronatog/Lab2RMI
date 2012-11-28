@@ -22,9 +22,6 @@ import managementClient.EventListenerInterface;
 
 public class ServerThread extends Thread {
 	private Socket socket = null;
-	/* Should not be needed
-	public int udpPort;
-	 */
 	public String userName;
 	public boolean loggedIn;
 	protected String analName;
@@ -160,14 +157,14 @@ public class ServerThread extends Thread {
 						if (inputLine.startsWith("!create ") || inputLine.startsWith("!bid ") || inputLine.equals("!list")) {
 
 							outputLine = auctionP.processInput(inputLine);
-
+							/*
 							if (inputLine.startsWith("!create") && !outputLine.startsWith("Error: ")) {
 
 							}
 							if (inputLine.startsWith("!bid") && !outputLine.startsWith("Error: ")) {
 								// Launch bid Event
 							}
-
+							*/
 							out.println(outputLine);
 						} else {
 							out.println("Unrecognized command.");
