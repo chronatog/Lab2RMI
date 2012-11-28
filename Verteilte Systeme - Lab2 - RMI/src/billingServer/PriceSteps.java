@@ -29,19 +29,25 @@ public class PriceSteps implements Serializable{
             throw new RemoteException("Negative values are not allowed");
         }
 
-        PriceStep newPS = new PriceStep(startPrice, endPrice,fixedPrice,variablePricePercent);
+        if(startPrice>endPrice){
+                        throw new RemoteException("The min price is higher than the max price");
 
-        synchronized(priceSteps){
-            for (PriceStep helpPS : priceSteps){
-                if(newPS.collide(helpPS)== true){
-                    throw new RemoteException("The price interval collides with an existing price step");
+        } else{
+
+            PriceStep newPS = new PriceStep(startPrice, endPrice,fixedPrice,variablePricePercent);
+            
+            synchronized(priceSteps){
+                for (PriceStep helpPS : priceSteps){
+                    if(newPS.collide(helpPS)== true){
+                        throw new RemoteException("The price interval collides with an existing price step");
+                    }
+
+
                 }
-                if(newPS.maxMin(helpPS) == true){
-                    throw new RemoteException("The min price is higher than the max price");
-                }
+             this.priceSteps.add(newPS);
+
             }
-            this.priceSteps.add(newPS);
-        }
+         }
 
     }
 
@@ -158,9 +164,9 @@ public class PriceSteps implements Serializable{
         }
 
         public boolean maxMin(PriceStep step){
-            if((this.minPrice >= this.maxPrice)== true){
+            if(this.minPrice > this.maxPrice){
                 return false;
-            }return true; 
+            }else return true;
         }
         
        
