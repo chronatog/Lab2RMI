@@ -6,6 +6,6 @@ import event.Event;
 
 public interface EventListenerInterface extends Remote {
 	void processEvent(Event event) throws RemoteException;
-	int getID() throws RemoteException;
-	void setID(int id) throws RemoteException;
+	int getId() throws RemoteException;
+	void setId(int id) throws RemoteException;
 }

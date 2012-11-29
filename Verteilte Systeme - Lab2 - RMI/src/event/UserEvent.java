@@ -1,6 +1,8 @@
 package event;
 
 public class UserEvent extends Event {
+	
+	private static final long serialVersionUID = -5020037460264699693L;
 	private String userString;
 	
 	public UserEvent(String type, long timestamp, String userName) throws Exception {

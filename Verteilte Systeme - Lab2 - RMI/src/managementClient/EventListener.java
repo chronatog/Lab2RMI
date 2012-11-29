@@ -17,6 +17,7 @@ public class EventListener extends UnicastRemoteObject implements EventInterface
 	
 	// Displays incoming events in user-friendly form
 	
+	private static final long serialVersionUID = -1918210732395070306L;
 	private static int mode = 0;
 	private static List<String> notificationsBuffer = new ArrayList<String>();
 	private int id = 0;
@@ -58,7 +59,7 @@ public class EventListener extends UnicastRemoteObject implements EventInterface
 			BidEvent bidEvent = (BidEvent) event;
 
 			if (bidEvent.getType().equals("BID_PLACED")) {
-				String message = bidEvent.getType() + ": " + timestamp + " " + "user " + bidEvent.getUserName() + " placed bid " + bidEvent.getPrice() + " on auction " + bidEvent.getAuctionID();
+				String message = bidEvent.getType() + ": " + timestamp + " " + "user " + bidEvent.getUserName() + " placed bid " + bidEvent.getPrice() + " on auction " + bidEvent.getAuctionId();
 				if (mode == 0) {
 					System.out.println(message);
 				} else {
@@ -66,7 +67,7 @@ public class EventListener extends UnicastRemoteObject implements EventInterface
 				}
 
 			} else if (bidEvent.getType().equals("BID_OVERBID")) {
-				String message = bidEvent.getType() + ": " + timestamp + " " + "user " + bidEvent.getUserName() + " overbid the auction " + bidEvent.getAuctionID() + " with " + bidEvent.getPrice();
+				String message = bidEvent.getType() + ": " + timestamp + " " + "user " + bidEvent.getUserName() + " overbid the auction " + bidEvent.getAuctionId() + " with " + bidEvent.getPrice();
 				if (mode == 0) {
 					System.out.println(message);
 				} else {
@@ -74,7 +75,7 @@ public class EventListener extends UnicastRemoteObject implements EventInterface
 				}
 
 			} else if (bidEvent.getType().equals("BID_WON")) {
-				String message = bidEvent.getType() + ": " + timestamp + " " + "user " + bidEvent.getUserName() + " won the auction " + bidEvent.getAuctionID() + " with " + bidEvent.getPrice();
+				String message = bidEvent.getType() + ": " + timestamp + " " + "user " + bidEvent.getUserName() + " won the auction " + bidEvent.getAuctionId() + " with " + bidEvent.getPrice();
 				if (mode == 0) {
 					System.out.println(message);
 				} else {
@@ -177,11 +178,11 @@ public class EventListener extends UnicastRemoteObject implements EventInterface
 		EventListener.mode = mode;
 	}
 
-	public int getID() throws RemoteException {
+	public int getId() throws RemoteException {
 		return this.id;
 	}
 
-	public void setID(int id) throws RemoteException {
+	public void setId(int id) throws RemoteException {
 		this.id = id;
 	}
 	

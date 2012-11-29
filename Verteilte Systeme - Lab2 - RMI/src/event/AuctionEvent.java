@@ -1,7 +1,7 @@
 package event;
 
 public class AuctionEvent extends Event {
-	private int auctionId;
+	private long auctionId;
 	private int duration;
 	private String auctionWinner;
 
@@ -15,7 +15,7 @@ public class AuctionEvent extends Event {
 		}
 	}
 
-	public AuctionEvent(String type, long timestamp, long auctionID, int duration, String auctionWinner) throws Exception {
+	public AuctionEvent(String type, long timestamp, long auctionId, int duration, String auctionWinner) throws Exception {
 
 		if ((type.equals("AUCTION_STARTED") || type.equals("AUCTION_ENDED"))) {
 			this.type = type;
@@ -32,7 +32,7 @@ public class AuctionEvent extends Event {
 		return auctionId;
 	}
 
-	public synchronized void setAuctionID(long auctionID) {
+	public synchronized void setAuctionId(long auctionId) {
 		this.auctionId = auctionId;
 	}
 

@@ -5,6 +5,6 @@ import java.rmi.RemoteException;
 
 public interface EventInterface extends Remote {
 	void processEvent(Event e) throws RemoteException;
-	int getID() throws RemoteException;
-	void setID(int id) throws RemoteException;
+	int getId() throws RemoteException;
+	void setId(int id) throws RemoteException;
 }

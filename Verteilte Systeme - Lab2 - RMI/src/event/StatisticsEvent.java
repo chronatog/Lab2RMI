@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StatisticsEvent extends Event {
+
+	private static final long serialVersionUID = -487372108197660940L;
 	private double value;
 	List<String> typeList = new ArrayList<String>();
 

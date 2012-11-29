@@ -36,6 +36,7 @@ public class ManagementClient {
 	static String loadTest = "";
 	static String line = "";
 	static boolean test = false;
+	
 	public static void main(String[] args) {
 		if (args.length == 2 || args.length == 3) {
 			String analBind = args[0];
@@ -52,8 +53,6 @@ public class ManagementClient {
 			EventInterface eventListener = null;
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 
-
-
 			readProperties();
 
 			// Connect to registry
@@ -61,8 +60,9 @@ public class ManagementClient {
 
 				registry = LocateRegistry.getRegistry(registryHost,registryPort);
 			} catch (Exception e) {
-				System.out.println("Couldn't find registry.");
+				System.out.println("Couldn't get registry.");
 			}
+			
 			// get billing remote object
 			try {
 				billingServer = (BillingServer) registry.lookup(billBind);
@@ -99,7 +99,6 @@ public class ManagementClient {
 				}
 				regex = "";
 				try {
-
 					regex = split[1].replaceAll("\'", "");
 				} catch (IndexOutOfBoundsException e) {
 					System.out.println("Error: Wrong argument count.");
@@ -128,7 +127,7 @@ public class ManagementClient {
 
 					line = stdin.readLine();
 				} catch (IOException e) {
-					// Close ressources?
+					System.out.println("Error: IO Error.");
 					System.exit(-1);
 				}
 				String[] split = line.split(" ");
@@ -233,7 +232,7 @@ public class ManagementClient {
 				} else if (line.equals("!hide") && split.length == 1) {
 					EventListener.setMode(1);
 
-					System.out.println("Starting buffering of notifications..");
+					System.out.println("Buffering notifications..");
 				} else if (line.equals("!print") && split.length == 1) {
 					EventListener.printBuffer();
 

@@ -259,7 +259,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 					System.out.println("Error: Creating event failed");
 				}
 			} else {
-				// current session time is bigger than the max -> new max
+				// current session time is longer than last one, override maxSessionTime
 				if (maxSessionTime.getValue() < difference) {	
 					try {
 						maxSessionTime= new StatisticsEvent("USER_SESSIONTIME_MAX", timestamp, difference);
@@ -287,7 +287,6 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 				System.out.println("Error: Creating event failed");
 			}
 		}
-		//notifyManagementClients(event);
 	}
 
 	private void notifyManagementClients(Event event) {
@@ -295,12 +294,9 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		List<EventInterface> notificationListForThisEvent = new ArrayList<EventInterface>(); 
 		Iterator<Subscription> iterator = subscriptionList.iterator();
 
-		//System.out.println("Request to notify management client, event type " + event.getType() + "Class" + event.getClass());
-
 		while (iterator.hasNext()) {
 
 			Subscription subscription = iterator.next();
-
 			pattern = subscription.getRegex();
 			EventInterface eventListener = subscription.getEventListener();
 
@@ -319,11 +315,7 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		while (it.hasNext()) {
 			EventInterface eventListener = null;
 			try {
-				eventListener = it.next();
-
-				//System.out.println("Calling processEvent for event type " + event.getType() + " Class " + event.getClass() );
-
-				eventListener.processEvent(event);
+				it.next().processEvent(event);
 			} catch (RemoteException e) {
 				deleteList.add(eventListener);
 			}
@@ -338,5 +330,4 @@ public class AnalyticsRMIHandler implements AnalyticsRMIInterface {
 		deleteList.clear();
 		notificationListForThisEvent.clear();
 	}
-
 }

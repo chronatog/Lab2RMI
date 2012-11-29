@@ -193,7 +193,7 @@ class MyTask extends TimerTask {
 		Double highestBid = AuctionServer.auctionHighestBid.get(id);
 		int duration = AuctionServer.auctionDuration.get(id);
 		
-		long auctionId = id;
+		int auctionId = id;
 		try {
 			ServerThread.billingServerSecureHandler.billAuction(highestBidder, auctionId, highestBid);
 		} catch (RemoteException ex) {
