@@ -47,7 +47,7 @@ public class BillingServerImpl implements BillingServer{
                 registry.rebind(bindingName, billingStub);
 
                 try {
-                System.in.read();
+                    System.in.read();
                 } catch (IOException ex) {
                 }
 
@@ -56,14 +56,17 @@ public class BillingServerImpl implements BillingServer{
                     registry.unbind(bindingName);
                     UnicastRemoteObject.unexportObject(billingserver, true);
 
-                    //System.exit(-1);
                 } catch (NotBoundException ex) {
+                    System.out.println("Error: Not bound");
+
                 } catch (AccessException ex) {
+                    System.out.println("Error: AccessException");
+
                 }
 
 
             } catch (RemoteException ex) {
-                //Logger.getLogger(BillingServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Error: binding failt");
             }
             
         }else{
@@ -101,7 +104,7 @@ public class BillingServerImpl implements BillingServer{
         }
      }
 
-    //
+    
    @Override
    public BillingServerSecure login(String username, String password) throws RemoteException{
        	   
@@ -156,6 +159,7 @@ public class BillingServerImpl implements BillingServer{
         }
      }
 
+
    private String pwtoMD5(String pw){
         try {
             byte[] byteOfPw = pw.getBytes("UTF-8");
@@ -169,10 +173,5 @@ public class BillingServerImpl implements BillingServer{
                 Logger.getLogger(BillingServerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null; 
-
    }
-
-
-   
-
 }

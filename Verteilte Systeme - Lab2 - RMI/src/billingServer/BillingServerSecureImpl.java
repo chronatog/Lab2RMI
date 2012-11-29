@@ -44,8 +44,6 @@ public class BillingServerSecureImpl implements BillingServerSecure{
          synchronized(userBill){
             UserBill uB = new UserBill(user, auctionID, price);
             userBill.add(uB);
-            
-
         }
     }
 
@@ -54,11 +52,7 @@ public class BillingServerSecureImpl implements BillingServerSecure{
     @Override
     public Bill getBill(String user) throws RemoteException{
 
-        return new Bill(user, userBill, priceSteps);
-       
+        return new Bill(user, userBill, priceSteps);  
     }
-
-
-
 }
 

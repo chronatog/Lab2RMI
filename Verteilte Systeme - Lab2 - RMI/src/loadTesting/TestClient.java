@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package loadTesting;
 
 import java.io.BufferedReader;
@@ -103,14 +98,6 @@ public class TestClient extends Thread{
               }
       ,new Date(),updateIntervalSec * 1000);
 
-      /*Timer timerRead = new Timer();
-      timerRead.scheduleAtFixedRate(
-              new TimerTask() {
-                    public void run(){
-                        read();
-                    }
-              }
-      ,new Date(),1000);*/
 
       // scheduling the task bid at fixed rate
       //  1min = 60 s = 60000 ms
@@ -130,25 +117,19 @@ public class TestClient extends Thread{
     
 
     private void login() {
-       // synchronized(out){
             String login = "!login client"+clientNr;
             out.println(login);
-        //}
+        
         
 
     }
 
     private void create() {
         synchronized(out){
-
-
-        String create = "!create "+auctionDuration+" book"+Math.round(Math.random()*100);
-        out.println(create);
-        auctionNr++;
-        createAuction = true; 
-        
-       
-        //System.out.println("Auctionnr: " + auctionNr);
+            String create = "!create "+auctionDuration+" book"+Math.round(Math.random()*100);
+            out.println(create);
+            auctionNr++;
+            createAuction = true;
         }
    }
 
@@ -157,49 +138,19 @@ public class TestClient extends Thread{
         long time = new Date().getTime() - startTime;
         double price = time/10.0f;
 
-
-       // System.out.println(price);
         price = price * 100;
         price = Math.round(price);
         price = price/100;
         Random rand = new Random();
         int id = rand.nextInt(auctions);
-
-        //System.out.println("Auctions: "  + auctions);
-        //System.out.println("ID: " + ID);
         String bid = "!bid " +id+" "+price;
-        //System.out.println(bid);
         ID++; 
         out.println(bid);
     }
 
     private void list() {
         String list = "!list";
-        //System.out.println("in der liste");
-        out.println(list);
-               // read();
-        
-    }
-
-    private void read() {
-        String serverIn;
-        //Antworten vom Server werden emfpangen und ausgegeben
-        try {
-            while ((serverIn = in.readLine()) != null) {
-                if(serverIn.isEmpty()== false){
-                   if(Character.isDigit(serverIn.charAt(0))){
-                    System.out.println(clientNr +" List: "+ serverIn+"\n");
-                    break;
-
-                    }
-                }
-                
-
-            }
-            in.close();
-        } catch (IOException ex) {
-            System.out.println("fehler im ");
-        }
+        out.println(list);      
     }
 
 }

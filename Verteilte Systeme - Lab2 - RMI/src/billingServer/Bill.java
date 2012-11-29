@@ -32,12 +32,10 @@ public class Bill implements Serializable{
                    AuctionBill auctionbillstub = new AuctionBill(auctionID, price, feeFix, feeFree, feeTotal);
                    auctionBill.add(auctionbillstub);
 
-
                 } else System.out.println("No Auctions for this user");
             }
          }
     }
-
 
 
     @Override
@@ -54,11 +52,8 @@ public class Bill implements Serializable{
         }
     }
 
-
-    
-
-
     public  class AuctionBill implements Serializable{
+        private static final long serialVersionUID = 4966574789560587967L;
 
         private long auctionID;
         private double strikePrice;
@@ -79,12 +74,6 @@ public class Bill implements Serializable{
         //\t -> Tab
         //%% Prozentzeichen
         return String.format("%d\t\t  %.2f\t\t%.2f\t    %.2f\t\t%.2f", auctionID, strikePrice, feeFix, feeVariable, feeTotal);
-
-
         }
-
-
     }
-
-
 }

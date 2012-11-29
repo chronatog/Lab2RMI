@@ -37,16 +37,12 @@ public class LoadTest {
 
             readProperties();
 
-            testClient = new ArrayList<TestClient>();
+             testClient = new ArrayList<TestClient>();
              startTime = new Date().getTime();
 
              String[] argsh;
              argsh= new String[] {analBindingName, billBindingName, "!subscribe .*"};
-             //System.out.println("L€NGE: "+argsh.length);
-
-            //ManagementClient mC = new ManagementClient();
-            //ManagementClient.main(analBindingName, billBindingName);
-            //ManagementClient.main(argsh);
+             
              testMC = new TestMC(argsh);
              testMC.start();
 
@@ -76,7 +72,6 @@ public class LoadTest {
                 try {
                     props.load(in);
                 } catch (IOException ex) {
-                    //Logger.getLogger(BillingServerMain.class.getName()).log(Level.SEVERE, null, ex);
                     System.out.println("Error:Loding Properties-File");
                 }
 
@@ -90,14 +85,10 @@ public class LoadTest {
                 try {
                     in.close();
                 } catch (IOException ex) {
-                   // Logger.getLogger(BillingServerMain.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
+                    System.out.println("Error: Closing InputStream");                 }
            }
         }else{
-            System.out.println("Error: Properties-File not found!");
-            
+            System.out.println("Error: Properties-File not found!");            
         }
      }
-
 }

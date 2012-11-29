@@ -21,9 +21,6 @@ public class PriceSteps implements Serializable{
         priceSteps = new ArrayList<PriceStep>();
     }
 
-
-    
-
     public void addPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) throws RemoteException {
         if(startPrice<0 || endPrice<0 || fixedPrice<0 || variablePricePercent<0){
             throw new RemoteException("Negative values are not allowed");
@@ -32,9 +29,8 @@ public class PriceSteps implements Serializable{
         {
             if(startPrice>endPrice){
                 throw new IllegalArgumentException("The min price is higher than the max price");
-
             }
-            }
+        }
 
             PriceStep newPS = new PriceStep(startPrice, endPrice,fixedPrice,variablePricePercent);
             
@@ -47,7 +43,6 @@ public class PriceSteps implements Serializable{
              this.priceSteps.add(newPS);
 
             }               
-
     }
 
     void deleteStep(double startPrice, double endPrice) throws RemoteException {
@@ -102,7 +97,6 @@ public class PriceSteps implements Serializable{
 
                 liste += pricestep.formatPriceStep() +"\n";
 
-
             }
             return header + "\n"+ liste;
         }
@@ -141,8 +135,6 @@ public class PriceSteps implements Serializable{
                 return String.format(" %.2f\t    %.2f\t    %.1f\t     %.1f%%",minPrice, maxPrice, feeFixed, feeVariable);
 
             }
-
-
         }
 
         public boolean collide(PriceStep step){

@@ -171,14 +171,17 @@ public class ManagementClient {
 						fixedPrice 			= Double.parseDouble(split[3]);
 						variablePrice 		= Double.parseDouble(split[4]);
 						// Add step to BillingServer
-
-						billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
+                                                if (billingServerSecure == null) {
+                                                    System.out.println("ERROR: You are currently not logged in");
+                                                } else {
+                                                    billingServerSecure.createPriceStep(startPrice, endPrice, fixedPrice, variablePrice);
 
 						if(endPrice == 0){
 							System.out.println("Step ["+startPrice+" INFINITY]" + " successfully added");
 						} else {
 							System.out.println("Step ["+startPrice+" "+endPrice +"]" + " successfully added");
 						}
+                                                }
 					} catch (RemoteException ex) {
 						System.out.println("Error: " + ex.getMessage());
 					} catch (NumberFormatException e) {
@@ -193,9 +196,13 @@ public class ManagementClient {
 						// Call RemoveStep from Billing Server
 						startPrice = Double.parseDouble(split[1]);
 						endPrice = Double.parseDouble(split[2]);
-						billingServerSecure.deletePriceStep(startPrice, endPrice);
-						System.out.println("Price step ["+startPrice+ " "+  endPrice + "]" + " successfully removed");
 
+                                                if (billingServerSecure == null) {
+                                                        System.out.println("ERROR: You are currently not logged in");
+                                                } else {
+                                                    billingServerSecure.deletePriceStep(startPrice, endPrice);
+                                                    System.out.println("Price step ["+startPrice+ " "+  endPrice + "]" + " successfully removed");
+                                                }
 					} catch (RemoteException ex) {
 						System.out.println(ex);
 					} catch (NumberFormatException e) {
@@ -210,9 +217,12 @@ public class ManagementClient {
 					userBill = split[1];
 					String bill;
 					try {
+                                            if (billingServerSecure == null) {
+                                                System.out.println("ERROR: You are currently not logged in");
+                                        } else {
 						bill = billingServerSecure.getBill(userBill).toString();
 						System.out.println(bill);
-
+                                        }
 					} catch (RemoteException ex) {
 						System.out.println(" Error: There are no bill");
 					}
@@ -282,7 +292,7 @@ public class ManagementClient {
 				} else {
 					System.out.println("Command not recognized.");
 				}
-			}//
+			}
 		} else {
 			System.out.println("Wrong argument count.");
 		}
@@ -312,85 +322,10 @@ public class ManagementClient {
 			System.err.println("Properties file not found!");
 		}
 	}
-	private static void login(String username, String pw) {
-		if (billingServer == null) {
-			System.out.println("ERROR: Not connected to billing server");
-		} else {
-			try {
-				BillingServerSecure bss = billingServer.login(username, pw);
-				if (bss == null) {
-					System.out.println("ERROR: Login failed");
-				} else {
-					billingServerSecure = bss;
-					System.out.println(username + " successfully logged in");
-				}
-			} catch (RemoteException ex) {
-				System.out.println("BillingServer Remote Exception");
-			}
-		}
-	}
+	
 
 	private static void logout() {
 		billingServerSecure = null;
 		userName = "";
-	}
-
-	private static void addPriceStep(double startPrice, double endPrice, double fixedFee, double variableFee) {
-		if (billingServerSecure == null) {
-			System.out.println("ERROR: You are currently not logged in");
-		} else if (endPrice != 0 && startPrice >= endPrice) {
-			System.out.println("ERROR: Incorrect price range");
-		} else {
-			try {
-				billingServerSecure.createPriceStep(startPrice, endPrice, fixedFee, variableFee);
-				System.out.println("Step [" + startPrice + " " + (endPrice == 0 ? "INFINITY" : endPrice) + "] successfully added");
-			} catch (RemoteException e) {
-				// Check if this displays the Error Messages from the billing Server
-				System.out.println(e.getMessage());
-			}
-		}
-	}
-
-	private static void removeStep(double startPrice, double endPrice) {
-		if (billingServerSecure == null) {
-			System.out.println("ERROR: You are currently not logged in");
-		} else {
-			try {
-				billingServerSecure.deletePriceStep(startPrice, endPrice);
-				System.out.println("Step [" + startPrice + " " + (endPrice == 0 ? "INFINITY" : endPrice) + "] successfully removed");
-			} catch (RemoteException e) {
-				System.out.println(e.getMessage());
-			}
-		}
-	}
-
-	private static void steps() {
-		if (billingServerSecure == null) {
-			System.out.println("ERROR: You are currently not logged in");
-		} else {
-			try {
-				PriceSteps priceSteps = billingServerSecure.getPriceSteps();
-				System.out.println(priceSteps);
-			} catch (RemoteException e) {
-				System.out.println(e.getMessage());
-			}
-		}
-	}
-
-	private static void bill(String userName) {
-		if (billingServerSecure == null) {
-			System.out.println("ERROR: You are currently not logged in");
-		} else {
-			try {
-				Bill bill = billingServerSecure.getBill(userName);
-				if (bill == null) {
-					System.out.println("ERROR: Bill not found for user " + userName);
-				} else {
-					System.out.println(bill);
-				}
-			} catch (RemoteException e) {
-				System.out.println("Billing Server Remote Exception");
-			}
-		}
 	}
 }
