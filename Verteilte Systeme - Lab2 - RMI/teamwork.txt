@@ -1,0 +1,2 @@
+Roy Brichta: analytics server and management client
+Elisabeth Bauernhofer: billing server and testing component

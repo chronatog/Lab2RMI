@@ -1,0 +1,9 @@
+Mac OS X Lion 10.7.5
+Prozessor  2 GHz Intel Core 2 Duo
+Speicher  4 GB 1067 MHz DDR3
+
+clients = 300
+auctionsPerMin = 55
+auctionDuration = 500
+updateIntervalSec: 10
+bidsPerMin = 35
